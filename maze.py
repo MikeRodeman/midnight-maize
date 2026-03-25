@@ -1,5 +1,6 @@
 import pygame
 import random
+import collections
 from constants import *
 
 class Maze:
@@ -79,22 +80,106 @@ class Maze:
                 # If none of the neighbors are unvisited, that means we hit a dead end.
                 # Pick up our yarn and backtrack:
                 stack.pop()
+    
+    def find_starting_positions(self):
+        # The player starts somewhere completely random:
+        player_x = self.rng.randint(0, GRID_SIZE - 1)
+        player_y = self.rng.randint(0, GRID_SIZE - 1)
+        self.player_starting_position = (player_x, player_y)
+
+        # Use breadth-first search to find the furthest cell from the
+        # player. This will be the position of the lookout tower.
+
+        # Keep track of the cells we need to check with their distances
+        # from the player:
+        queue = collections.deque([(self.player_starting_position, 0)])
+
+        # Keep track of the cells we've visited already:
+        visited = {self.player_starting_position}
+
+        # Keep track of the furthest cell we find:
+        furthest_cell_from_player = self.player_starting_position
+        max_distance_from_player = 0
+
+        # Use a dictionary to keep track of the distance between
+        # the player and every cell:
+        self.distances_from_player = {self.player_starting_position: 0}
+
+        # Breadth-first search "flooding" the grid until no cells left:
+        while queue:
+            # Pop the oldest cell from the front of the queue:
+            current_cell, current_distance_from_player = queue.popleft()
+            current_x, current_y = current_cell
+
+            # Keep track of furthest found so far:
+            if current_distance_from_player > max_distance_from_player:
+                max_distance_from_player = current_distance_from_player
+                furthest_cell_from_player = current_cell
+            
+            # The wall data for the current cell:
+            current_walls = self.grid[current_y][current_x]
+
+            # Look in all 4 directions (N, E, S, W):
+            for direction_bit, dx, dy in self.directions:
+
+                # Do bitwise AND. If it's not 0, then that means there
+                # isn't a wall in that direction, which means the path
+                # is open in that direction:
+                if not (current_walls & direction_bit):
+                    neighbor_x = current_x + dx
+                    neighbor_y = current_y + dy
+                    neighbor_cell = (neighbor_x, neighbor_y)
+
+                    # If we haven't visited/flooded into this
+                    # cell already, move into it:
+                    if neighbor_cell not in visited:
+                        visited.add(neighbor_cell)
+                        neighbor_distance = current_distance_from_player + 1
+
+                        # Keep track of distance in order to calculate scarecrow starting position:
+                        self.distances_from_player[neighbor_cell] = neighbor_distance
+
+                        # Add to the back of the queue to check it later:
+                        queue.append((neighbor_cell, neighbor_distance))
+        
+        # The lookout tower is positioned at the furthest cell:
+        self.lookout_tower_position = furthest_cell_from_player
+
+        # The scarecrow needs to span somewhere in the "middle" of the path
+        # between the player and the lookout tower:
+        min_scarecrow_distance_from_player = max_distance_from_player * 0.30
+        max_scarecrow_distance_from_player = max_distance_from_player * 0.70
+
+        #Find all the cells satisfying this requirement:
+        possible_scarecrow_starting_positions = []
+        
+        for cell, distance_from_player in self.distances_from_player.items():
+            if min_scarecrow_distance_from_player <= distance_from_player <= max_scarecrow_distance_from_player:
+                possible_scarecrow_starting_positions.append(cell)
+        
+        # Randomly pick one of the possible cells for the scarecrow's starting position:
+        self.scarecrow_starting_position = self.rng.choice(possible_scarecrow_starting_positions)
 
     def draw(self, surface):
-        # Draw a skeleton of the path of the maze:
         for y in range(GRID_SIZE):
             for x in range(GRID_SIZE):
-                center_x = x * TILE_SIZE + TILE_SIZE // 2
-                center_y = y * TILE_SIZE + TILE_SIZE // 2
+                # Get the wall bitmask for the current cell:
+                walls_bitmask = self.grid[y][x]
 
-                pygame.draw.circle(surface, WHITE, (center_x, center_y), 3)
+                # Coordinates of the cell corners:
+                left_x = x * TILE_SIZE
+                top_y = y * TILE_SIZE
+                right_x = left_x + TILE_SIZE
+                bottom_y = top_y + TILE_SIZE
 
-                val = self.grid[y][x]
+                if walls_bitmask & N:
+                    pygame.draw.line(surface, WHITE, (left_x, top_y), (right_x, top_y))
 
-                if not (val & E):
-                    neighbor_center_x = (x + 1) * TILE_SIZE + TILE_SIZE // 2
-                    pygame.draw.line(surface, WHITE, (center_x, center_y), (neighbor_center_x, center_y))
-                
-                if not (val & S):
-                    neighbor_center_y = (y + 1) * TILE_SIZE + TILE_SIZE // 2
-                    pygame.draw.line(surface, WHITE, (center_x, center_y), (center_x, neighbor_center_y))
+                if walls_bitmask & E:
+                    pygame.draw.line(surface, WHITE, (right_x, top_y), (right_x, bottom_y))
+
+                if walls_bitmask & S:
+                    pygame.draw.line(surface, WHITE, (left_x, bottom_y), (right_x, bottom_y))
+
+                if walls_bitmask & W:
+                    pygame.draw.line(surface, WHITE, (left_x, top_y), (left_x, bottom_y))

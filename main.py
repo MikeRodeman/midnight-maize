@@ -3,6 +3,9 @@ import sys
 from constants import *
 from maze import Maze
 from sidebar import Sidebar
+from player import Player
+from scarecrow import Scarecrow
+from lookout_tower import LookoutTower
 
 class Game:
     def __init__(self):
@@ -13,24 +16,37 @@ class Game:
         pygame.display.set_caption("Midnight Maize")
         self.clock = pygame.time.Clock()
 
-        self.new_game("PyWeek41")
+        self.new_game()
 
         self.running = True
     
     def new_game(self, specific_seed=None):
         self.maze = Maze(specific_seed)
         self.sidebar = Sidebar()
+
+        self.maze.find_starting_positions()
+
+        self.player = Player(self.maze.player_starting_position)
+        self.lookout_tower = LookoutTower(self.maze.lookout_tower_position)
+        self.scarecrow = Scarecrow(self.maze.scarecrow_starting_position)
     
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_r:
+            #         self.new_game()
     
     def draw_screen(self):
         self.screen.fill(BLACK)
 
         self.maze.draw(self.screen)
         self.sidebar.draw(self.screen)
+
+        self.player.draw(self.screen)
+        self.lookout_tower.draw(self.screen)
+        self.scarecrow.draw(self.screen)
 
         pygame.display.flip()
 

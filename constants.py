@@ -1,4 +1,7 @@
-GRID_SIZE = 20 # A 21x21 grid.
+# Grid size is a prime number to
+# ensure the starting window size
+# doesn't clip the edge of the screen:
+GRID_SIZE = 19 # A 19x19 grid.
 TILE_SIZE = 16
 
 MAZE_HEIGHT = GRID_SIZE * TILE_SIZE
