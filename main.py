@@ -1,0 +1,39 @@
+import pygame
+import sys
+from constants import *
+
+class Game:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT),
+                                                pygame.SCALED | pygame.RESIZABLE)
+        pygame.display.set_caption("Midnight Maize")
+        self.clock = pygame.time.Clock()
+
+        self.running = True
+    
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+    
+    def draw_screen(self):
+        self.screen.fill(BLACK)
+
+        pygame.draw.rect(self.screen, SIDEBAR_COLOR, (MAZE_WIDTH, 0, SIDEBAR_WIDTH, LOGICAL_SCREEN_HEIGHT))
+
+        pygame.display.flip()
+
+    def run(self):
+        while self.running:
+            self.handle_events()
+            self.draw_screen()
+            self.clock.tick(FPS)
+        
+        pygame.quit()
+        sys.exit()
+
+if __name__ == "__main__":
+
+    game = Game()
+    game.run()
