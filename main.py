@@ -24,21 +24,24 @@ class Game:
         self.maze = Maze(seed)
         self.sidebar = Sidebar()
 
+        self.character_sprites = pygame.sprite.Group()
+
         self.player = Player(self.maze.player_starting_position)
         self.lookout_tower = LookoutTower(self.maze.lookout_tower_position)
         self.scarecrow = Scarecrow(self.maze.scarecrow_starting_position)
 
-        # The maze background never changes (neither does the Lookout Tower),
-        # so instead of drawing the maze from scratch on every frame, create
-        # a Surface to put the maze on so you don't have to draw the maze
-        # from scratch on every frame, you can just blit the surface to the screen:
+        self.character_sprites.add(self.lookout_tower)
+        self.character_sprites.add(self.scarecrow)
+        self.character_sprites.add(self.player)
+
+        # Instead of drawing the maze from scratch on every frame,
+        # create a Surface to put the maze on, and you can just
+        # blit the surface to the screen:
         self.background_surface = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))
         self.background_surface.fill(BLACK) # TODO: I think this can be deleted once we make tiles
 
-        # Draw the maze on the surface (and the Lookout Tower
-        # since it doesn't change either):
+        # Draw the maze on the surface:
         self.maze.draw(self.background_surface)
-        self.lookout_tower.draw(self.background_surface)
     
     def handle_events(self):
         for event in pygame.event.get():
@@ -53,14 +56,17 @@ class Game:
 
         self.sidebar.draw(self.screen)
 
-        self.player.draw(self.screen)
-        self.scarecrow.draw(self.screen)
-
+        self.character_sprites.draw(self.screen)
+        
         pygame.display.flip()
+
+    def update(self):
+        self.character_sprites.update(self.maze)
 
     def run(self):
         while self.running:
             self.handle_events()
+            self.update()
             self.draw_screen()
             self.clock.tick(FPS)
         

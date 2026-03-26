@@ -1,12 +1,21 @@
 import pygame
 from constants import *
 
-class Scarecrow:
+class Scarecrow(pygame.sprite.Sprite):
     def __init__(self, starting_position):
-        self.grid_x, self.grid_y = starting_position
+        # Call parent constructor:
+        pygame.sprite.Sprite.__init__(self)
 
-    def draw(self, surface):
-        center_x = self.grid_x * TILE_SIZE + TILE_SIZE // 2
-        center_y = self.grid_y * TILE_SIZE + TILE_SIZE // 2
+        # Make Surface to put sprite on:
+        self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
 
-        pygame.draw.circle(surface, (255, 50, 50), (center_x, center_y), 6) # red
+        # Draw sprite to the surface:
+        # TODO: Replace with pixel art:
+        pygame.draw.circle(self.image, (255, 50, 50), (TILE_SIZE // 2, TILE_SIZE // 2), 6)
+
+        # Set starting position:
+        self.pos_x = starting_position[0] * TILE_SIZE + TILE_SIZE // 2
+        self.pos_y = starting_position[1] * TILE_SIZE + TILE_SIZE // 2
+        
+        self.rect = self.image.get_rect()
+        self.rect.center = (int(self.pos_x), int(self.pos_y))

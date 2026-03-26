@@ -1,12 +1,21 @@
 import pygame
 from constants import *
 
-class LookoutTower:
+class LookoutTower(pygame.sprite.Sprite):
     def __init__(self, position):
-        self.grid_x, self.grid_y = position
-    
-    def draw(self, surface):
-        center_x = self.grid_x * TILE_SIZE + TILE_SIZE // 2
-        center_y = self.grid_y * TILE_SIZE + TILE_SIZE // 2
+        # Call parent constructor:
+        pygame.sprite.Sprite.__init__(self)
 
-        pygame.draw.circle(surface, (255, 255, 50), (center_x, center_y), 6) # yellow
+        # Make Surface to put sprite on:
+        self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+
+        # Draw sprite to the surface:
+        # TODO: Replace with pixel art:
+        pygame.draw.circle(self.image, (255, 255, 50), (TILE_SIZE // 2, TILE_SIZE // 2), 6)
+
+        # Set position:
+        self.pos_x = position[0] * TILE_SIZE + TILE_SIZE // 2
+        self.pos_y = position[1] * TILE_SIZE + TILE_SIZE // 2
+        
+        self.rect = self.image.get_rect()
+        self.rect.center = (int(self.pos_x), int(self.pos_y))
