@@ -23,3 +23,11 @@ N = 1  # 0001 (North/Top)
 S = 2  # 0010 (South/Bottom)
 W = 4  # 0100 (West/Left)
 E = 8  # 1000 (East/Right)
+
+# Speed settings:
+PLAYER_SPEED = 1.2
+PLAYER_RUN_SPEED = 2.4
+
+MAX_STAMINA = 100
+STAMINA_DECAY = 0.5
+STAMINA_REGEN = 0.25

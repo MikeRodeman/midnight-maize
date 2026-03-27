@@ -32,10 +32,32 @@ class Player(pygame.sprite.Sprite):
         # Line up the center of the visual rect with the center of the hitbox rect:
         self.rect.center = self.hitbox_rect.center
         
-        self.speed = 1.2 # TODO: Put in constants.py?        
+        self.speed = PLAYER_SPEED
+        self.stamina = MAX_STAMINA
+        self.is_exhausted = False
 
     def update(self, maze):
         keys = pygame.key.get_pressed()
+
+        if self.stamina <= 0:
+            self.is_exhausted = True
+        elif self.stamina >= 20: # Can only run again after recovering to 20%
+            self.is_exhausted = False
+
+        can_run = (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and not self.is_exhausted
+
+        # Check if any movement key is being pressed:
+        is_moving = any([keys[pygame.K_UP], keys[pygame.K_w], keys[pygame.K_DOWN], 
+                        keys[pygame.K_s], keys[pygame.K_LEFT], keys[pygame.K_a], 
+                        keys[pygame.K_RIGHT], keys[pygame.K_d]])
+        
+        if can_run and is_moving:
+            self.speed = PLAYER_RUN_SPEED
+            self.stamina = max(0, self.stamina - STAMINA_DECAY)
+        else:
+            self.speed = PLAYER_SPEED
+            self.stamina = min(MAX_STAMINA, self.stamina + STAMINA_REGEN)
+        
         dx, dy = 0, 0
 
         if keys[pygame.K_UP] or keys[pygame.K_w]: dy -= self.speed

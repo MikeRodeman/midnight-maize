@@ -54,7 +54,7 @@ class Game:
     def draw_screen(self):
         self.screen.blit(self.background_surface, (0, 0))
 
-        self.sidebar.draw(self.screen)
+        self.sidebar.draw(self.screen, self.player)
 
         self.character_sprites.draw(self.screen)
         
