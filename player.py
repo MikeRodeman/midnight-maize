@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 from maze import *
+from glow_stick import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, starting_position):
@@ -111,3 +112,8 @@ class Player(pygame.sprite.Sprite):
                     if delta > 0: self.hitbox_rect.bottom = wall_rect.top
                     elif delta < 0: self.hitbox_rect.top = wall_rect.bottom
                     self.pos_y = self.hitbox_rect.centery
+
+    def drop_glow_stick(self):
+        """Create a glow stick at the player's current center."""
+        glow_stick = GlowStick(self.rect.center)
+        return glow_stick

@@ -126,3 +126,10 @@ class Scarecrow(pygame.sprite.Sprite):
             return (next_x, next_y)
         
         return None
+    
+    def investigate_glow_stick(self, grid_position):
+        self.state = ScarecrowState.INVESTIGATE
+        self.path.clear() # Abandon whatever it was doing
+
+        # Implement later:
+        # self.path = calculate_astar(self.current_grid_cell, grid_position)
