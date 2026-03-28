@@ -2,8 +2,8 @@ import pygame
 from constants import *
 
 class MenuManager:
-    def __init__(self, big_font, small_font):
-        self.big_font = big_font
+    def __init__(self, large_font, small_font):
+        self.large_font = large_font
         self.small_font = small_font
         
         self.overlay = pygame.Surface((LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT))
@@ -22,7 +22,7 @@ class MenuManager:
 
     def draw_start_menu(self, screen):
         screen.fill(BLACK)
-        self.draw_text_centered(screen, "MIDNIGHT MAIZE", self.big_font, 50, (255, 50, 50))
+        self.draw_text_centered(screen, "MIDNIGHT MAIZE", self.large_font, 50, (255, 50, 50))
         
         options = [
             "[S] START NEW GAME",
@@ -35,8 +35,8 @@ class MenuManager:
             self.draw_text_centered(screen, option, self.small_font, 120 + (i * 30))
 
     def draw_paused_menu(self, screen):
-        screen.blit(self.overlay, (0, 0)) # Dim the maze
-        self.draw_text_centered(screen, "PAUSED", self.big_font, 60)
+        screen.blit(self.overlay, (0, 0))
+        self.draw_text_centered(screen, "PAUSED", self.large_font, 60)
         
         options = [
             "[ESC] RESUME",
@@ -50,7 +50,7 @@ class MenuManager:
 
     def draw_story_screen(self, screen):
         self.draw_overlay(screen)
-        self.draw_text_centered(screen, "THE TALE", self.big_font, 50)
+        self.draw_text_centered(screen, "THE TALE", self.large_font, 50)
         
         # Draw current page
         p_text = self.story_pages[self.current_story_page]
@@ -62,7 +62,7 @@ class MenuManager:
 
     def draw_controls_screen(self, screen):
         self.draw_overlay(screen)
-        self.draw_text_centered(screen, "HOW TO SURVIVE", self.big_font, 40)
+        self.draw_text_centered(screen, "HOW TO SURVIVE", self.large_font, 40)
         
         controls = [
             "WASD / ARROWS : MOVE",
@@ -80,7 +80,7 @@ class MenuManager:
 
     def draw_enter_seed_screen(self, screen):
         self.draw_overlay(screen)
-        self.draw_text_centered(screen, "TYPE CUSTOM SEED", self.big_font, 60)
+        self.draw_text_centered(screen, "TYPE CUSTOM SEED", self.large_font, 60)
         
         # Draw the box for typing
         box_rect = pygame.Rect(LOGICAL_SCREEN_WIDTH//2 - 100, 120, 200, 30)
@@ -94,10 +94,41 @@ class MenuManager:
 
     def draw_current_seed_screen(self, screen, current_seed):
         self.draw_overlay(screen)
-        self.draw_text_centered(screen, "MAP DATA", self.big_font, 70)
+        self.draw_text_centered(screen, "MAP DATA", self.large_font, 70)
         self.draw_text_centered(screen, f"SEED: {current_seed}", self.small_font, 130, (255, 255, 100))
         self.draw_text_centered(screen, "SHARE THIS WITH FRIENDS", self.small_font, 160)
         self.draw_text_centered(screen, "[BACKSPACE] RETURN", self.small_font, 210)
 
     def draw_overlay(self, screen):
         screen.blit(self.overlay, (0, 0))
+    
+    def draw_results_screen(self, screen, won, time_string, glow_sticks_used, glow_sticks_left, current_seed):
+        self.draw_overlay(screen)
+
+        if won:
+            title = "YOU SURVIVED!"
+            subtitle = "YOU REACHED THE LOOKOUT TOWER."
+            color = (50, 255, 50) # Green
+        else:
+            title = "YOU DIED."
+            subtitle = "THE SCARECROW CLAIMED YOUR SOUL."
+            color = (255, 50, 50) # Red
+
+        self.draw_text_centered(screen, title, self.large_font, 40, color)
+        self.draw_text_centered(screen, subtitle, self.small_font, 80, WHITE)
+
+        # Stats
+        self.draw_text_centered(screen, f"TIME: {time_string}", self.small_font, 120, (200, 200, 200))
+        self.draw_text_centered(screen, f"STICKS USED: {glow_sticks_used}", self.small_font, 140, (200, 200, 200))
+        self.draw_text_centered(screen, f"STICKS LEFT: {glow_sticks_left}", self.small_font, 160, (200, 200, 200))
+        self.draw_text_centered(screen, f"MAP SEED: {current_seed}", self.small_font, 190, (255, 255, 100))
+
+        # Options
+        options = [
+            "[R] RETRY CURRENT MAP",
+            "[N] START NEW RANDOM MAP",
+            "[E] ENTER CUSTOM SEED",
+            "[Q] QUIT TO MAIN MENU"
+        ]
+        for i, option in enumerate(options):
+            self.draw_text_centered(screen, option, self.small_font, 230 + (i * 18))

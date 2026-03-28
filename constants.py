@@ -8,6 +8,7 @@ class GameState(Enum):
     CONTROLS_SCREEN = 4
     ENTER_SEED_SCREEN = 5
     CURRENT_SEED_SCREEN = 6
+    RESULTS_SCREEN = 7
 
 # Grid size is a prime number to
 # ensure the starting window size
@@ -67,3 +68,6 @@ STORY_PAGES = [
     "It dawns on you, your backpack is full of industrial-grade, white, neon glow sticks. They are very bright, but they also attract unwanted attention.",
     "Cautiously using your glow sticks to help guide you, avoid the paranormal sentinel, and find your way to the lookout tower in the Midnight Maize."
     ]
+
+PLAYER_LIGHT_RADIUS = TILE_SIZE * 4
+GLOW_STICK_LIGHT_RADIUS = TILE_SIZE * 3

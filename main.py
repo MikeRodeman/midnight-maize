@@ -22,8 +22,17 @@ class Game:
         self.state_stack = [GameState.START_MENU]
         
         self.large_font = pygame.font.Font(LARGE_FONT_PATH, 32)
-        self.font = pygame.font.Font(SMALL_FONT_PATH, 16)
-        self.menus = MenuManager(self.large_font, self.font)
+        self.small_font = pygame.font.Font(SMALL_FONT_PATH, 16)
+
+        # The nightfall surface that goes over the maze:
+        self.nightfall = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))
+        
+        # This causes magenta to act like green in a green screen.
+        # It will appear transparent. This is for the circular cutouts
+        # in the nightfall surface:
+        self.nightfall.set_colorkey((255, 0, 255)) 
+        
+        self.menus = MenuManager(self.large_font, self.small_font)
 
         self.event_handler = EventHandler(self)
 
@@ -84,6 +93,22 @@ class Game:
             self.screen.blit(self.background_surface, (0, 0))
             self.character_sprites.draw(self.screen)
             self.glow_stick_sprites.draw(self.screen)
+
+            # Fill the nightfall surface with a really dark blue:
+            self.nightfall.fill((5, 5, 12))
+
+            # Cut out a hole in the nightfall for the player.
+            # Magenta acts as green in a green screen:
+            pygame.draw.circle(self.nightfall, (255, 0, 255), self.player.rect.center, PLAYER_LIGHT_RADIUS)
+
+            # Also cut out holes in the nightfall for the glow sticks:
+            for glow_stick_sprite in self.glow_stick_sprites:
+                pygame.draw.circle(self.nightfall, (255, 0, 255), glow_stick_sprite.rect.center, GLOW_STICK_LIGHT_RADIUS)
+
+            # Draw the nightfall over the maze:
+            self.screen.blit(self.nightfall, (0, 0))
+
+            # Draw sidebar after nightfall is drawn so it stays on top:
             self.sidebar.draw(self.screen, self.player, self.elapsed_ticks)
 
         # Route the drawing based on the active state:
@@ -98,7 +123,16 @@ class Game:
         elif self.state == GameState.ENTER_SEED_SCREEN:
             self.menus.draw_enter_seed_screen(self.screen)
         elif self.state == GameState.CURRENT_SEED_SCREEN:
-            self.menus.draw_current_seed_screen(self.screen, self.maze.seed) 
+            self.menus.draw_current_seed_screen(self.screen, self.maze.seed)
+        elif self.state == GameState.RESULTS_SCREEN:
+            self.menus.draw_results_screen(
+                self.screen, 
+                self.last_result_won, 
+                self.last_result_time_string, 
+                self.last_result_sticks_used, 
+                self.last_result_sticks_left, 
+                self.maze.seed
+            )
 
         pygame.display.flip()
 
@@ -137,14 +171,15 @@ class Game:
         else:
             time_string = f"{seconds:.2f} seconds"
 
-        # TODO: Make results menu
-        print("*** RESULTS ***")
-        print("WIN" if won else "LOSS")
-        print(f"Time: {time_string}")
-        print(f"Used: {self.player.glow_sticks_used}")
-        print(f"Left: {self.player.glow_sticks_left}")
+        # Save stats to the game object so results menu can read them:
+        self.last_result_won = won
+        self.last_result_time_string = time_string
+        self.last_result_sticks_used = self.player.glow_sticks_used
+        self.last_result_sticks_left = self.player.glow_sticks_left
 
-        self.new_game()
+        # Clear everything before in the state stack so the player
+        # can't "unpause" a finished game:
+        self.state_stack = [GameState.RESULTS_SCREEN]
 
     def run(self):
         while self.running:

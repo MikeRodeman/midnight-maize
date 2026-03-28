@@ -30,6 +30,8 @@ class EventHandler:
                     self.handle_enter_seed(event)
                 elif current_state == GameState.CURRENT_SEED_SCREEN:
                     self.handle_current_seed(event)
+                elif current_state == GameState.RESULTS_SCREEN:
+                    self.handle_results_screen(event)
 
     def handle_playing(self, event):
         if event.key == pygame.K_SPACE:
@@ -48,7 +50,7 @@ class EventHandler:
 
     def handle_start_menu(self, event):
         if event.key == pygame.K_s:
-            self.game.new_game() # Generate new random map
+            self.game.new_game() # Generate new random maze
             self.game.state_stack = [GameState.PLAYING] # Clear stack and play
         elif event.key == pygame.K_e:
             self.game.change_state(GameState.ENTER_SEED_SCREEN)
@@ -64,15 +66,15 @@ class EventHandler:
         if event.key == pygame.K_ESCAPE:
             self.game.go_back() # Pop pause menu, resume playing
         elif event.key == pygame.K_r:
-            self.game.new_game(self.game.maze.seed) # Restart current map
+            self.game.new_game(self.game.maze.seed) # Reset current maze
             self.game.state_stack = [GameState.PLAYING]
         elif event.key == pygame.K_n:
-            self.game.new_game() # Start new map
+            self.game.new_game() # Start new maze
             self.game.state_stack = [GameState.PLAYING]
         elif event.key == pygame.K_v:
             self.game.change_state(GameState.CURRENT_SEED_SCREEN)
         elif event.key == pygame.K_q:
-            self.game.state_stack = [GameState.START_MENU] # Nuke stack, go to main menu
+            self.game.state_stack = [GameState.START_MENU] # Reset stack, go to main menu
 
     def handle_story_screen(self, event):
         if event.key == pygame.K_SPACE:
@@ -88,7 +90,7 @@ class EventHandler:
             self.game.go_back()
 
     def handle_enter_seed(self, event):
-        if event.key == pygame.K_RETURN:
+        if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
             # Start game with custom seed
             seed_to_use = self.game.menus.seed_input_text if self.game.menus.seed_input_text else None
             self.game.new_game(seed_to_use)
@@ -107,3 +109,15 @@ class EventHandler:
     def handle_current_seed(self, event):
         if event.key == pygame.K_BACKSPACE:
             self.game.go_back()
+    
+    def handle_results_screen(self, event):
+        if event.key == pygame.K_r:
+            self.game.new_game(self.game.maze.seed) # Reset current maze
+            self.game.state_stack = [GameState.PLAYING]
+        elif event.key == pygame.K_n:
+            self.game.new_game() # Start new maze
+            self.game.state_stack = [GameState.PLAYING]
+        elif event.key == pygame.K_e:
+            self.game.change_state(GameState.ENTER_SEED_SCREEN)
+        elif event.key == pygame.K_q:
+            self.game.state_stack = [GameState.START_MENU] # Reset stack, go to main menu
