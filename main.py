@@ -63,6 +63,10 @@ class Game:
     def update(self):
         self.character_sprites.update(self.maze)
 
+        if self.player.hitbox_rect.colliderect(self.scarecrow.hitbox_rect):
+            print("THE SCARECROW GOT YOU!")
+            self.new_game()
+
     def run(self):
         while self.running:
             self.handle_events()
