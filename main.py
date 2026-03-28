@@ -24,6 +24,9 @@ class Game:
         self.large_font = pygame.font.Font(LARGE_FONT_PATH, 32)
         self.small_font = pygame.font.Font(SMALL_FONT_PATH, 16)
 
+        # The ground:
+        self.ground_img = pygame.image.load("ground.png").convert()
+
         # The nightfall surface that goes over the maze:
         self.nightfall = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))
         
@@ -79,9 +82,9 @@ class Game:
         # create a Surface to put the maze on, and you can just
         # blit the surface to the screen:
         self.background_surface = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))
-        self.background_surface.fill(BLACK) # TODO: I think this can be deleted once we make tiles
+        self.background_surface.blit(self.ground_img, (0, 0))
 
-        # Draw the maze on the surface:
+        # Draw the maze on top of the surface:
         self.maze.draw(self.background_surface)
         
     def handle_events(self):

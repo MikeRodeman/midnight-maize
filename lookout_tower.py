@@ -6,12 +6,8 @@ class LookoutTower(pygame.sprite.Sprite):
         # Call parent constructor:
         super().__init__()
 
-        # Make Surface to put sprite on:
-        self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
-
-        # Draw sprite to the surface:
-        # TODO: Replace with pixel art:
-        pygame.draw.circle(self.image, (255, 255, 50), (TILE_SIZE // 2, TILE_SIZE // 2), 6)
+        # Pixel art:
+        self.image = pygame.image.load("lookout_tower.png").convert_alpha()
 
         # Set position:
         self.pos_x = position[0] * TILE_SIZE + TILE_SIZE // 2

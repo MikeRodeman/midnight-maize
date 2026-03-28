@@ -5,8 +5,8 @@ class GlowStick(pygame.sprite.Sprite):
     def __init__(self, pixel_position):
         super().__init__()
 
-        self.image = pygame.Surface((4, 4), pygame.SRCALPHA)
-        self.image.fill((50, 255, 50))
+        # Pixel art:
+        self.image = pygame.image.load("glow_stick.png").convert_alpha()
 
         self.rect = self.image.get_rect()
         self.rect.center = pixel_position

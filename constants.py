@@ -29,6 +29,7 @@ FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 SIDEBAR_COLOR = (30, 30, 30)
+CORN_WALL_COLOR = (180, 160, 50)
 
 # Bitmask constants for walls. Similar to Linux file permissions.
 N = 1  # 0001 (North/Top)

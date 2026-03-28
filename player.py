@@ -8,12 +8,8 @@ class Player(pygame.sprite.Sprite):
         # Call parent constructor:
         super().__init__()
 
-        # Make Surface to put pixel art on:
-        self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
-
-        # Draw pixel art on the Surface:
-        # TODO: Replace with pixel art:
-        pygame.draw.circle(self.image, (50, 50, 255), (TILE_SIZE // 2, TILE_SIZE // 2), 6)
+        # Pixel art:
+        self.image = pygame.image.load("player.png").convert_alpha()
 
         # Make Rect for the pixel art
         self.rect = self.image.get_rect()

@@ -15,12 +15,8 @@ class Scarecrow(pygame.sprite.Sprite):
         # Call parent constructor:
         super().__init__()
 
-        # Make Surface to put pixel art on:
-        self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
-
-        # Draw pixel art on the Surface:
-        # TODO: Replace with pixel art:
-        pygame.draw.circle(self.image, (255, 50, 50), (TILE_SIZE // 2, TILE_SIZE // 2), 6)
+        # Pixel art:
+        self.image = pygame.image.load("scarecrow.png").convert_alpha()
 
         self.rect = self.image.get_rect()
 

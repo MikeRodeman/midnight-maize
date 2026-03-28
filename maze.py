@@ -223,13 +223,13 @@ class Maze:
                     # Correct for 0-indexing mismatch on the last pixel.
                     # A window N pixels wide has indices 0 to N - 1, not N:
                     draw_y = min(bottom_y, MAZE_HEIGHT - 1)
-                    pygame.draw.line(surface, WHITE, (left_x, draw_y), (right_x, draw_y))
+                    pygame.draw.line(surface, CORN_WALL_COLOR, (left_x, draw_y), (right_x, draw_y))
                 if walls_bitmask & E or x == GRID_SIZE - 1:
                     draw_x = min(right_x, MAZE_WIDTH - 1)
-                    pygame.draw.line(surface, WHITE, (draw_x, top_y), (draw_x, bottom_y))
+                    pygame.draw.line(surface, CORN_WALL_COLOR, (draw_x, top_y), (draw_x, bottom_y))
 
                 # Draw the North and West borders:
                 if y == 0: # North
-                    pygame.draw.line(surface, WHITE, (left_x, top_y), (right_x, top_y))
+                    pygame.draw.line(surface, CORN_WALL_COLOR, (left_x, top_y), (right_x, top_y))
                 if x == 0: # West
-                    pygame.draw.line(surface, WHITE, (left_x, top_y), (left_x, bottom_y))
+                    pygame.draw.line(surface, CORN_WALL_COLOR, (left_x, top_y), (left_x, bottom_y))
