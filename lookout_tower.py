@@ -4,7 +4,7 @@ from constants import *
 class LookoutTower(pygame.sprite.Sprite):
     def __init__(self, position):
         # Call parent constructor:
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
 
         # Make Surface to put sprite on:
         self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)

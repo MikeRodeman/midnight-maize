@@ -5,7 +5,7 @@ from maze import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, starting_position):
         # Call parent constructor:
-        pygame.sprite.Sprite.__init__(self)
+        super().__init__()
 
         # Make Surface to put pixel art on:
         self.image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
