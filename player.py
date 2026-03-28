@@ -37,6 +37,9 @@ class Player(pygame.sprite.Sprite):
         self.stamina = MAX_STAMINA
         self.is_exhausted = False
 
+        self.glow_sticks_left = INITIAL_GLOW_STICKS
+        self.glow_sticks_used = 0
+
     def update(self, maze):
         keys = pygame.key.get_pressed()
 
@@ -114,6 +117,11 @@ class Player(pygame.sprite.Sprite):
                     self.pos_y = self.hitbox_rect.centery
 
     def drop_glow_stick(self):
-        """Create a glow stick at the player's current center."""
-        glow_stick = GlowStick(self.rect.center)
-        return glow_stick
+        """Create a glow stick at the player's current center if any are left."""
+        if self.glow_sticks_left > 0:
+            self.glow_sticks_left -= 1
+            self.glow_sticks_used += 1      
+            
+            return GlowStick(self.rect.center)
+        
+        return None

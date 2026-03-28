@@ -196,7 +196,6 @@ class Scarecrow(pygame.sprite.Sprite):
                 if (time_since_seen > SCARECROW_MEMORY_LENGTH 
                     or self.current_grid_cell == self.target_player_position):
                     
-                    print('lost player')
                     self.state = ScarecrowState.WANDER
                     self.target_player_position = None
                     self.path.clear()
@@ -242,3 +241,4 @@ class Scarecrow(pygame.sprite.Sprite):
 
         # Clear path so A* recalculates toward the player's current spot:
         self.path.clear()
+        
