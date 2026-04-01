@@ -1,34 +1,36 @@
-import pygame
 import sys
-from src.core.constants import *
+
+import pygame
+
+import src.core.constants as c
+from src.core.event_handler import EventHandler
 from src.core.maze import Maze
-from src.ui.sidebar import Sidebar
+from src.entities.lookout_tower import LookoutTower
 from src.entities.player import Player
 from src.entities.scarecrow import Scarecrow
-from src.entities.lookout_tower import LookoutTower
 from src.ui.menus import MenuManager
-from src.core.event_handler import EventHandler
+from src.ui.sidebar import Sidebar
 
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(
-            (LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT),
+            (c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT),
             pygame.SCALED | pygame.RESIZABLE)
         pygame.display.set_caption("Midnight Maize")
         self.clock = pygame.time.Clock()
 
         # Stack to keep track of the game state:
-        self.state_stack = [GameState.START_MENU]
+        self.state_stack = [c.GameState.START_MENU]
         
-        self.large_font = pygame.font.Font(LARGE_FONT_PATH, 32)
-        self.small_font = pygame.font.Font(SMALL_FONT_PATH, 16)
+        self.large_font = pygame.font.Font(c.LARGE_FONT_PATH, 32)
+        self.small_font = pygame.font.Font(c.SMALL_FONT_PATH, 16)
 
         # The ground:
-        self.ground_img = pygame.image.load(GRAPHICS_DIR / "ground.png").convert()
+        self.ground_img = pygame.image.load(c.GRAPHICS_DIR / "ground.png").convert()
 
         # The nightfall surface that goes over the maze:
-        self.nightfall = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))
+        self.nightfall = pygame.Surface((c.MAZE_WIDTH, c.MAZE_HEIGHT))
         
         # This causes magenta to act like green in a green screen.
         # It will appear transparent. This is for the circular cutouts
@@ -81,7 +83,7 @@ class Game:
         # Instead of drawing the maze from scratch on every frame,
         # create a Surface to put the maze on, and you can just
         # blit the surface to the screen:
-        self.background_surface = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))
+        self.background_surface = pygame.Surface((c.MAZE_WIDTH, c.MAZE_HEIGHT))
         self.background_surface.blit(self.ground_img, (0, 0))
 
         # Draw the maze on top of the surface:
@@ -92,7 +94,7 @@ class Game:
     
     def draw_screen(self):
         # Always draw the game world in the background (except start menu):
-        if self.state != GameState.START_MENU:
+        if self.state != c.GameState.START_MENU:
             self.screen.blit(self.background_surface, (0, 0))
             self.character_sprites.draw(self.screen)
             self.glow_stick_sprites.draw(self.screen)
@@ -102,11 +104,11 @@ class Game:
 
             # Cut out a hole in the nightfall for the player.
             # Magenta acts as green in a green screen:
-            pygame.draw.circle(self.nightfall, (255, 0, 255), self.player.rect.center, PLAYER_LIGHT_RADIUS)
+            pygame.draw.circle(self.nightfall, (255, 0, 255), self.player.rect.center, c.PLAYER_LIGHT_RADIUS)
 
             # Also cut out holes in the nightfall for the glow sticks:
             for glow_stick_sprite in self.glow_stick_sprites:
-                pygame.draw.circle(self.nightfall, (255, 0, 255), glow_stick_sprite.rect.center, GLOW_STICK_LIGHT_RADIUS)
+                pygame.draw.circle(self.nightfall, (255, 0, 255), glow_stick_sprite.rect.center, c.GLOW_STICK_LIGHT_RADIUS)
 
             # Draw the nightfall over the maze:
             self.screen.blit(self.nightfall, (0, 0))
@@ -115,19 +117,19 @@ class Game:
             self.sidebar.draw(self.screen, self.player, self.elapsed_ticks)
 
         # Route the drawing based on the active state:
-        if self.state == GameState.START_MENU:
+        if self.state == c.GameState.START_MENU:
             self.menus.draw_start_menu(self.screen)
-        elif self.state == GameState.PAUSED_MENU:
+        elif self.state == c.GameState.PAUSED_MENU:
             self.menus.draw_paused_menu(self.screen)
-        elif self.state == GameState.STORY_SCREEN:
+        elif self.state == c.GameState.STORY_SCREEN:
             self.menus.draw_story_screen(self.screen)
-        elif self.state == GameState.CONTROLS_SCREEN:
+        elif self.state == c.GameState.CONTROLS_SCREEN:
             self.menus.draw_controls_screen(self.screen)
-        elif self.state == GameState.ENTER_SEED_SCREEN:
+        elif self.state == c.GameState.ENTER_SEED_SCREEN:
             self.menus.draw_enter_seed_screen(self.screen)
-        elif self.state == GameState.CURRENT_SEED_SCREEN:
+        elif self.state == c.GameState.CURRENT_SEED_SCREEN:
             self.menus.draw_current_seed_screen(self.screen, self.maze.seed)
-        elif self.state == GameState.RESULTS_SCREEN:
+        elif self.state == c.GameState.RESULTS_SCREEN:
             self.menus.draw_results_screen(
                 self.screen, 
                 self.last_result_won, 
@@ -148,7 +150,7 @@ class Game:
         # unpausing, the time will include all the paused time:
         self.last_frame_ticks = current_ticks
 
-        if self.state == GameState.PLAYING:
+        if self.state == c.GameState.PLAYING:
             self.elapsed_ticks += delta_time
 
             self.glow_stick_sprites.update()
@@ -182,14 +184,14 @@ class Game:
 
         # Clear everything before in the state stack so the player
         # can't "unpause" a finished game:
-        self.state_stack = [GameState.RESULTS_SCREEN]
+        self.state_stack = [c.GameState.RESULTS_SCREEN]
 
     def run(self):
         while self.running:
             self.handle_events()
             self.update()
             self.draw_screen()
-            self.clock.tick(FPS)
+            self.clock.tick(c.FPS)
 
         pygame.quit()
         sys.exit()

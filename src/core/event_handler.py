@@ -1,6 +1,8 @@
-import pygame
 import sys
-from src.core.constants import *
+
+import pygame
+
+import src.core.constants as c
 
 class EventHandler:
     def __init__(self, game):
@@ -16,21 +18,21 @@ class EventHandler:
             if event.type == pygame.KEYDOWN:
                 current_state = self.game.state
 
-                if current_state == GameState.PLAYING:
+                if current_state == c.GameState.PLAYING:
                     self.handle_playing(event)
-                elif current_state == GameState.START_MENU:
+                elif current_state == c.GameState.START_MENU:
                     self.handle_start_menu(event)
-                elif current_state == GameState.PAUSED_MENU:
+                elif current_state == c.GameState.PAUSED_MENU:
                     self.handle_paused_menu(event)
-                elif current_state == GameState.STORY_SCREEN:
+                elif current_state == c.GameState.STORY_SCREEN:
                     self.handle_story_screen(event)
-                elif current_state == GameState.CONTROLS_SCREEN:
+                elif current_state == c.GameState.CONTROLS_SCREEN:
                     self.handle_controls_screen(event)
-                elif current_state == GameState.ENTER_SEED_SCREEN:
+                elif current_state == c.GameState.ENTER_SEED_SCREEN:
                     self.handle_enter_seed(event)
-                elif current_state == GameState.CURRENT_SEED_SCREEN:
+                elif current_state == c.GameState.CURRENT_SEED_SCREEN:
                     self.handle_current_seed(event)
-                elif current_state == GameState.RESULTS_SCREEN:
+                elif current_state == c.GameState.RESULTS_SCREEN:
                     self.handle_results_screen(event)
 
     def handle_playing(self, event):
@@ -42,23 +44,23 @@ class EventHandler:
                 
                 # Grace period check so the player can drop glow sticks at
                 # beginning of game without immediately being chased down:
-                if (self.game.elapsed_ticks / 1000 > GRACE_PERIOD) or (self.game.glow_sticks_dropped > GRACE_GLOW_STICKS_AMOUNT):
+                if (self.game.elapsed_ticks / 1000 > c.GRACE_PERIOD) or (self.game.glow_sticks_dropped > c.GRACE_GLOW_STICKS_AMOUNT):
                     self.game.scarecrow.investigate_glow_stick(glow_stick.grid_position)
                     
         elif event.key == pygame.K_ESCAPE:
-            self.game.change_state(GameState.PAUSED_MENU)
+            self.game.change_state(c.GameState.PAUSED_MENU)
 
     def handle_start_menu(self, event):
         if event.key == pygame.K_s:
             self.game.new_game() # Generate new random maze
-            self.game.state_stack = [GameState.PLAYING] # Clear stack and play
+            self.game.state_stack = [c.GameState.PLAYING] # Clear stack and play
         elif event.key == pygame.K_e:
-            self.game.change_state(GameState.ENTER_SEED_SCREEN)
+            self.game.change_state(c.GameState.ENTER_SEED_SCREEN)
         elif event.key == pygame.K_t:
             self.game.menus.current_story_page = 0
-            self.game.change_state(GameState.STORY_SCREEN)
+            self.game.change_state(c.GameState.STORY_SCREEN)
         elif event.key == pygame.K_c:
-            self.game.change_state(GameState.CONTROLS_SCREEN)
+            self.game.change_state(c.GameState.CONTROLS_SCREEN)
         elif event.key == pygame.K_q:
             self.game.running = False
 
@@ -67,14 +69,14 @@ class EventHandler:
             self.game.go_back() # Pop pause menu, resume playing
         elif event.key == pygame.K_r:
             self.game.new_game(self.game.maze.seed) # Reset current maze
-            self.game.state_stack = [GameState.PLAYING]
+            self.game.state_stack = [c.GameState.PLAYING]
         elif event.key == pygame.K_n:
             self.game.new_game() # Start new maze
-            self.game.state_stack = [GameState.PLAYING]
+            self.game.state_stack = [c.GameState.PLAYING]
         elif event.key == pygame.K_v:
-            self.game.change_state(GameState.CURRENT_SEED_SCREEN)
+            self.game.change_state(c.GameState.CURRENT_SEED_SCREEN)
         elif event.key == pygame.K_q:
-            self.game.state_stack = [GameState.START_MENU] # Reset stack, go to main menu
+            self.game.state_stack = [c.GameState.START_MENU] # Reset stack, go to main menu
 
     def handle_story_screen(self, event):
         if event.key == pygame.K_SPACE:
@@ -94,7 +96,7 @@ class EventHandler:
             # Start game with custom seed
             seed_to_use = self.game.menus.seed_input_text if self.game.menus.seed_input_text else None
             self.game.new_game(seed_to_use)
-            self.game.state_stack = [GameState.PLAYING]
+            self.game.state_stack = [c.GameState.PLAYING]
             self.game.menus.seed_input_text = "" # Clear input for next time
         elif event.key == pygame.K_BACKSPACE:
             if len(self.game.menus.seed_input_text) > 0:
@@ -113,11 +115,11 @@ class EventHandler:
     def handle_results_screen(self, event):
         if event.key == pygame.K_r:
             self.game.new_game(self.game.maze.seed) # Reset current maze
-            self.game.state_stack = [GameState.PLAYING]
+            self.game.state_stack = [c.GameState.PLAYING]
         elif event.key == pygame.K_n:
             self.game.new_game() # Start new maze
-            self.game.state_stack = [GameState.PLAYING]
+            self.game.state_stack = [c.GameState.PLAYING]
         elif event.key == pygame.K_e:
-            self.game.change_state(GameState.ENTER_SEED_SCREEN)
+            self.game.change_state(c.GameState.ENTER_SEED_SCREEN)
         elif event.key == pygame.K_q:
-            self.game.state_stack = [GameState.START_MENU] # Reset stack, go to main menu
+            self.game.state_stack = [c.GameState.START_MENU] # Reset stack, go to main menu

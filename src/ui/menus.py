@@ -1,27 +1,28 @@
 import pygame
-from src.core.constants import *
+
+import src.core.constants as c
 
 class MenuManager:
     def __init__(self, large_font, small_font):
         self.large_font = large_font
         self.small_font = small_font
         
-        self.overlay = pygame.Surface((LOGICAL_SCREEN_WIDTH, LOGICAL_SCREEN_HEIGHT))
+        self.overlay = pygame.Surface((c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT))
         # self.overlay.set_alpha(100)
-        self.overlay.fill(BLACK)
+        self.overlay.fill(c.BLACK)
         
         self.seed_input_text = ""
         
         self.current_story_page = 0
-        self.story_pages = STORY_PAGES
+        self.story_pages = c.STORY_PAGES
 
-    def draw_text_centered(self, screen, text, font, y_position, color=WHITE):
+    def draw_text_centered(self, screen, text, font, y_position, color=c.WHITE):
         surface = font.render(text, False, color)
-        x_position = (LOGICAL_SCREEN_WIDTH // 2) - (surface.get_width() // 2)
+        x_position = (c.LOGICAL_SCREEN_WIDTH // 2) - (surface.get_width() // 2)
         screen.blit(surface, (x_position, y_position))
 
     def draw_start_menu(self, screen):
-        screen.fill(BLACK)
+        screen.fill(c.BLACK)
         self.draw_text_centered(screen, "MIDNIGHT MAIZE", self.large_font, 50, (255, 50, 50))
         
         options = [
@@ -71,7 +72,7 @@ class MenuManager:
             "ESC : PAUSE / MENU",
             "",
             "OBJECTIVE: FIND THE LOOKOUT TOWER",
-            f"SCARECROW WAKES AFTER {GRACE_PERIOD}s OR {GRACE_GLOW_STICKS_AMOUNT} STICKS DROPPED",
+            f"SCARECROW WAKES AFTER {c.GRACE_PERIOD}s OR {c.GRACE_GLOW_STICKS_AMOUNT} STICKS DROPPED",
             "",
             "[BACKSPACE] RETURN"
         ]
@@ -83,8 +84,8 @@ class MenuManager:
         self.draw_text_centered(screen, "TYPE CUSTOM SEED", self.large_font, 60)
         
         # Draw the box for typing
-        box_rect = pygame.Rect(LOGICAL_SCREEN_WIDTH//2 - 100, 120, 200, 30)
-        pygame.draw.rect(screen, WHITE, box_rect, 2)
+        box_rect = pygame.Rect(c.LOGICAL_SCREEN_WIDTH//2 - 100, 120, 200, 30)
+        pygame.draw.rect(screen, c.WHITE, box_rect, 2)
         
         # Render the current input string
         input_surface = self.small_font.render(self.seed_input_text + "_", False, (50, 255, 50))
@@ -115,7 +116,7 @@ class MenuManager:
             color = (255, 50, 50) # Red
 
         self.draw_text_centered(screen, title, self.large_font, 40, color)
-        self.draw_text_centered(screen, subtitle, self.small_font, 80, WHITE)
+        self.draw_text_centered(screen, subtitle, self.small_font, 80, c.WHITE)
 
         # Stats
         self.draw_text_centered(screen, f"TIME: {time_string}", self.small_font, 120, (200, 200, 200))

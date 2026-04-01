@@ -1,5 +1,6 @@
 import heapq
-from src.core.constants import *
+
+import src.core.constants as c
 
 def calculate_astar(maze_grid, start_cell, goal_cell):
     # Keep track of cells we've seen but haven't explored yet:
@@ -30,7 +31,7 @@ def calculate_astar(maze_grid, start_cell, goal_cell):
         walls_bitmask = maze_grid[current_y][current_x]
 
         # Check each direction:
-        for direction, dx, dy in [(N, 0, -1), (S, 0, 1), (W, -1, 0), (E, 1, 0)]:
+        for direction, dx, dy in [(c.N, 0, -1), (c.S, 0, 1), (c.W, -1, 0), (c.E, 1, 0)]:
             if not (walls_bitmask & direction):
                 neighbor = (current_x + dx, current_y + dy)
 

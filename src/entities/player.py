@@ -1,5 +1,6 @@
 import pygame
-from src.core.constants import *
+
+import src.core.constants as c
 from src.core.maze import Maze
 from src.entities.glow_stick import GlowStick
 
@@ -9,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         # Pixel art:
-        self.image = pygame.image.load(GRAPHICS_DIR / "player.png").convert_alpha()
+        self.image = pygame.image.load(c.GRAPHICS_DIR / "player.png").convert_alpha()
 
         # Make Rect for the pixel art
         self.rect = self.image.get_rect()
@@ -18,8 +19,8 @@ class Player(pygame.sprite.Sprite):
         self.current_grid_cell = starting_position
 
         # Set starting position:
-        self.pos_x = starting_position[0] * TILE_SIZE + TILE_SIZE // 2
-        self.pos_y = starting_position[1] * TILE_SIZE + TILE_SIZE // 2
+        self.pos_x = starting_position[0] * c.TILE_SIZE + c.TILE_SIZE // 2
+        self.pos_y = starting_position[1] * c.TILE_SIZE + c.TILE_SIZE // 2
 
         # Make Rect for the hitbox, smaller than the visual rect
         # so the sprite can fit between the walls of the maze:
@@ -29,11 +30,11 @@ class Player(pygame.sprite.Sprite):
         # Line up the center of the visual rect with the center of the hitbox rect:
         self.rect.center = self.hitbox_rect.center
         
-        self.speed = PLAYER_SPEED
-        self.stamina = MAX_STAMINA
+        self.speed = c.PLAYER_SPEED
+        self.stamina = c.MAX_STAMINA
         self.is_exhausted = False
 
-        self.glow_sticks_left = INITIAL_GLOW_STICKS
+        self.glow_sticks_left = c.INITIAL_GLOW_STICKS
         self.glow_sticks_used = 0
 
     def update(self, maze):
@@ -52,11 +53,11 @@ class Player(pygame.sprite.Sprite):
                         keys[pygame.K_RIGHT], keys[pygame.K_d]])
         
         if can_run and is_moving:
-            self.speed = PLAYER_RUN_SPEED
-            self.stamina = max(0, self.stamina - STAMINA_DECAY)
+            self.speed = c.PLAYER_RUN_SPEED
+            self.stamina = max(0, self.stamina - c.STAMINA_DECAY)
         else:
-            self.speed = PLAYER_SPEED
-            self.stamina = min(MAX_STAMINA, self.stamina + STAMINA_REGEN)
+            self.speed = c.PLAYER_SPEED
+            self.stamina = min(c.MAX_STAMINA, self.stamina + c.STAMINA_REGEN)
         
         dx, dy = 0, 0
 
@@ -65,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT] or keys[pygame.K_a]: dx -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]: dx += self.speed
 
-        self.current_grid_cell = (int(self.pos_x // TILE_SIZE), int(self.pos_y // TILE_SIZE))
+        self.current_grid_cell = (int(self.pos_x // c.TILE_SIZE), int(self.pos_y // c.TILE_SIZE))
 
         # Horizontal movement and collision:
         self.pos_x += dx
@@ -91,7 +92,7 @@ class Player(pygame.sprite.Sprite):
             for j in range(-1, 2):
                 neighbor_x, neighbor_y = grid_x + i, grid_y + j
 
-                if 0 <= neighbor_x < GRID_SIZE and 0 <= neighbor_y < GRID_SIZE:
+                if 0 <= neighbor_x < c.GRID_SIZE and 0 <= neighbor_y < c.GRID_SIZE:
                     wall_rects = maze.wall_rects[(neighbor_x, neighbor_y)]
                     wall_rects_to_check.extend(wall_rects)
         
