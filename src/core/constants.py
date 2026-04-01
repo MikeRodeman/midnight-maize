@@ -1,4 +1,21 @@
 from enum import Enum
+from pathlib import Path
+
+# Directory Paths:
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+
+GRAPHICS_DIR = ROOT_DIR / "assets" / "graphics"
+FONTS_DIR = ROOT_DIR / "assets" / "fonts"
+DATA_DIR = ROOT_DIR / "assets" / "data"
+
+CORE_DIR = ROOT_DIR / "src" / "core"
+ENTITIES_DIR = ROOT_DIR / "src" / "entities"
+UI_DIR = ROOT_DIR / "src" / "ui"
+UTILS_DIR = ROOT_DIR / "src" / "utils"
+
+STORY_PATH = DATA_DIR / "story.txt"
+SMALL_FONT_PATH = FONTS_DIR / "m5x7.ttf"
+LARGE_FONT_PATH = FONTS_DIR / "m6x11.ttf"
 
 class GameState(Enum):
     START_MENU = 0
@@ -56,9 +73,6 @@ INITIAL_GLOW_STICKS = 10
 
 GRACE_PERIOD = 15
 GRACE_GLOW_STICKS_AMOUNT = 5
-
-SMALL_FONT_PATH = "m5x7.ttf"
-LARGE_FONT_PATH = "m6x11.ttf"
 
 STORY_PAGES = [
     "You were making record time at the Miller Farm's annual corn maze contest, when all of a sudden you tripped over a rogue pumpkin, and the world went to black.",

@@ -1,5 +1,5 @@
 import heapq
-from constants import *
+from src.core.constants import *
 
 def calculate_astar(maze_grid, start_cell, goal_cell):
     # Keep track of cells we've seen but haven't explored yet:

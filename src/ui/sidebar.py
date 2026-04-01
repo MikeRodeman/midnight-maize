@@ -1,7 +1,7 @@
 import pygame
 import os
-from constants import *
-from player import *
+from src.core.constants import *
+from src.entities.player import Player
 
 class Sidebar:
     def __init__(self):

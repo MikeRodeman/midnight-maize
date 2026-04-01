@@ -1,13 +1,13 @@
 import pygame
 import sys
-from constants import *
-from maze import Maze
-from sidebar import Sidebar
-from player import Player
-from scarecrow import *
-from lookout_tower import LookoutTower
-from menus import *
-from event_handler import EventHandler
+from src.core.constants import *
+from src.core.maze import Maze
+from src.ui.sidebar import Sidebar
+from src.entities.player import Player
+from src.entities.scarecrow import Scarecrow
+from src.entities.lookout_tower import LookoutTower
+from src.ui.menus import MenuManager
+from src.core.event_handler import EventHandler
 
 class Game:
     def __init__(self):
@@ -25,7 +25,7 @@ class Game:
         self.small_font = pygame.font.Font(SMALL_FONT_PATH, 16)
 
         # The ground:
-        self.ground_img = pygame.image.load("ground.png").convert()
+        self.ground_img = pygame.image.load(GRAPHICS_DIR / "ground.png").convert()
 
         # The nightfall surface that goes over the maze:
         self.nightfall = pygame.Surface((MAZE_WIDTH, MAZE_HEIGHT))

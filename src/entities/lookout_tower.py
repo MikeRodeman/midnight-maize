@@ -1,5 +1,5 @@
 import pygame
-from constants import *
+from src.core.constants import *
 
 class LookoutTower(pygame.sprite.Sprite):
     def __init__(self, position):
@@ -7,7 +7,7 @@ class LookoutTower(pygame.sprite.Sprite):
         super().__init__()
 
         # Pixel art:
-        self.image = pygame.image.load("lookout_tower.png").convert_alpha()
+        self.image = pygame.image.load(GRAPHICS_DIR / "lookout_tower.png").convert_alpha()
 
         # Set position:
         self.pos_x = position[0] * TILE_SIZE + TILE_SIZE // 2

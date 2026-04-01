@@ -1,5 +1,5 @@
 import pygame
-from constants import *
+from src.core.constants import *
 
 class MenuManager:
     def __init__(self, large_font, small_font):

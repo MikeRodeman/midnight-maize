@@ -1,7 +1,7 @@
 import pygame
-from constants import *
-from maze import *
-from glow_stick import *
+from src.core.constants import *
+from src.core.maze import Maze
+from src.entities.glow_stick import GlowStick
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, starting_position):
@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         # Pixel art:
-        self.image = pygame.image.load("player.png").convert_alpha()
+        self.image = pygame.image.load(GRAPHICS_DIR / "player.png").convert_alpha()
 
         # Make Rect for the pixel art
         self.rect = self.image.get_rect()

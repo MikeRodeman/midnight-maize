@@ -1,12 +1,12 @@
 import pygame
-from constants import *
+from src.core.constants import *
 
 class GlowStick(pygame.sprite.Sprite):
     def __init__(self, pixel_position):
         super().__init__()
 
         # Pixel art:
-        self.image = pygame.image.load("glow_stick.png").convert_alpha()
+        self.image = pygame.image.load(GRAPHICS_DIR / "glow_stick.png").convert_alpha()
 
         self.rect = self.image.get_rect()
         self.rect.center = pixel_position

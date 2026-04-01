@@ -1,8 +1,8 @@
 import pygame
 import random
-from player import *
-from constants import *
-from astar import *
+from src.entities.player import Player
+from src.core.constants import *
+from src.utils.astar import calculate_astar
 from enum import Enum
 
 class ScarecrowState(Enum):
@@ -16,7 +16,7 @@ class Scarecrow(pygame.sprite.Sprite):
         super().__init__()
 
         # Pixel art:
-        self.image = pygame.image.load("scarecrow.png").convert_alpha()
+        self.image = pygame.image.load(GRAPHICS_DIR / "scarecrow.png").convert_alpha()
 
         self.rect = self.image.get_rect()
 

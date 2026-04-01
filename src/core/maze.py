@@ -1,7 +1,7 @@
 import pygame
 import random
 import collections
-from constants import *
+from src.core.constants import *
 
 class Maze:
     def __init__(self, seed=None):

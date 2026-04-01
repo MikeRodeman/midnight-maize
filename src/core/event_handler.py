@@ -1,6 +1,6 @@
 import pygame
 import sys
-from constants import *
+from src.core.constants import *
 
 class EventHandler:
     def __init__(self, game):
