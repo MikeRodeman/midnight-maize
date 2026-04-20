@@ -16,9 +16,6 @@ class Player(pygame.sprite.Sprite):
         # Make Rect for the pixel art
         self.rect = self.image.get_rect()
 
-        # Set grid location:
-        self.current_grid_position = starting_grid_position
-
         # Set starting position:
         self.pos_x = starting_grid_position[0] * c.TILE_SIZE + c.TILE_SIZE // 2
         self.pos_y = starting_grid_position[1] * c.TILE_SIZE + c.TILE_SIZE // 2
@@ -37,14 +34,26 @@ class Player(pygame.sprite.Sprite):
 
         self.glow_sticks_left = c.INITIAL_GLOW_STICKS
         self.glow_sticks_used = 0
+    
+    @property
+    def current_grid_position(self):
+        return (int(self.pos_x // c.TILE_SIZE), int(self.pos_y // c.TILE_SIZE))
+
+    @property
+    def stamina(self) -> float:
+        return self._stamina
+    
+    @stamina.setter
+    def stamina(self, value: float) -> None:
+        self._stamina = max(0.0, min(value, c.MAX_STAMINA))
+
+        if self._stamina <= 0:
+            self.is_exhausted = True
+        elif self._stamina >= 20: # Can only run again after recovering to 20%
+            self.is_exhausted = False
 
     def update(self, maze: Maze) -> None:
         keys = pygame.key.get_pressed()
-
-        if self.stamina <= 0:
-            self.is_exhausted = True
-        elif self.stamina >= 20: # Can only run again after recovering to 20%
-            self.is_exhausted = False
 
         can_run = (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and not self.is_exhausted
 
@@ -55,10 +64,10 @@ class Player(pygame.sprite.Sprite):
         
         if can_run and is_moving:
             self.speed = c.PLAYER_RUN_SPEED
-            self.stamina = max(0, self.stamina - c.STAMINA_DECAY)
+            self.stamina -= c.STAMINA_DECAY
         else:
             self.speed = c.PLAYER_SPEED
-            self.stamina = min(c.MAX_STAMINA, self.stamina + c.STAMINA_REGEN)
+            self.stamina += c.STAMINA_REGEN
         
         dx, dy = 0.0, 0.0
 
@@ -66,8 +75,6 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] or keys[pygame.K_s]: dy += self.speed
         if keys[pygame.K_LEFT] or keys[pygame.K_a]: dx -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]: dx += self.speed
-
-        self.current_grid_position = (int(self.pos_x // c.TILE_SIZE), int(self.pos_y // c.TILE_SIZE))
 
         # Horizontal movement and collision:
         self.pos_x += dx

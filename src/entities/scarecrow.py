@@ -35,9 +35,6 @@ class Scarecrow(pygame.sprite.Sprite):
         # Line up the center of the visual rect with the center of the hitbox rect:
         self.rect.center = self.hitbox_rect.center
 
-        self.speed = c.SCARECROW_SPEED
-        self.state: ScarecrowState = ScarecrowState.WANDER
-
         # Logical position and movement on the grid:
         self.current_grid_cell = starting_grid_position
         self.target_grid_cell = starting_grid_position
@@ -53,6 +50,27 @@ class Scarecrow(pygame.sprite.Sprite):
         # Memory timer for chasing around corners:
         self.last_seen_player_time = 0
     
+        self.speed = c.SCARECROW_SPEED
+        self._state = None # Initialize so setter doesn't crash on first use
+        self.state: ScarecrowState = ScarecrowState.WANDER
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, new_state):
+        if self._state != new_state:
+            self._state = new_state
+            self.path.clear() # Ensure path is always reset on state change
+
+            if new_state == ScarecrowState.CHASE:
+                self.speed = c.SCARECROW_CHASE_SPEED
+            elif new_state == ScarecrowState.INVESTIGATE:
+                self.speed = c.SCARECROW_RUN_SPEED
+            else:
+                self.speed = c.SCARECROW_SPEED
+
     def update(self, maze: Maze, player: Player) -> None:
         # Always check if we can see the player:
         self.check_for_player(player, maze)
@@ -103,12 +121,10 @@ class Scarecrow(pygame.sprite.Sprite):
 
         # Active chase, player in sight:
         if self.state == ScarecrowState.CHASE and self.target_player_grid_position:
-            self.speed = c.SCARECROW_CHASE_SPEED
             self.path = calculate_astar(maze.grid, self.current_grid_cell, self.target_player_grid_position)
         
         # Investigate new glow stick:
         elif self.state == ScarecrowState.INVESTIGATE and self.target_glow_stick_grid_position:
-            self.speed = c.SCARECROW_RUN_SPEED
             self.path = calculate_astar(maze.grid, self.current_grid_cell, self.target_glow_stick_grid_position)
 
             # Go back to wandering after finding glow stick:
@@ -117,9 +133,7 @@ class Scarecrow(pygame.sprite.Sprite):
                 self.target_glow_stick_grid_position = None # Clear memory
         
         # Wandering:
-        elif self.state == ScarecrowState.WANDER:
-            self.speed = c.SCARECROW_SPEED
-            
+        elif self.state == ScarecrowState.WANDER:           
             next_cell = self.calculate_wander_move(maze)
             if next_cell:
                 self.path.append(next_cell)
@@ -158,7 +172,6 @@ class Scarecrow(pygame.sprite.Sprite):
         
         self.state = ScarecrowState.INVESTIGATE
         self.target_glow_stick_grid_position = grid_position
-        self.path.clear() # Stop whatever we're doing to go investigate.
     
     def check_for_player(self, player: Player, maze: Maze) -> None:
         # Proximity check ignoring walls:
@@ -198,7 +211,6 @@ class Scarecrow(pygame.sprite.Sprite):
                     
                     self.state = ScarecrowState.WANDER
                     self.target_player_grid_position = None
-                    self.path.clear()
     
     def has_line_of_sight(self, player: Player, maze: Maze) -> bool:
         player_grid_x, player_grid_y = player.current_grid_position
@@ -235,10 +247,3 @@ class Scarecrow(pygame.sprite.Sprite):
     def start_chase(self, player_grid_position: Coordinate) -> None:
         self.state = ScarecrowState.CHASE
         self.target_player_grid_position = player_grid_position
-
-        # Instantly increase speed:
-        self.speed = c.SCARECROW_CHASE_SPEED
-
-        # Clear path so A* recalculates toward the player's current spot:
-        self.path.clear()
-        
