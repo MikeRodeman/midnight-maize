@@ -7,7 +7,13 @@ import src.core.constants as c
 from src.core.custom_types import Coordinate
 
 class Maze:
+    """Generates and manages the grid, walls, and starting points of a procedural maze."""
     def __init__(self, seed: str | None = None) -> None:
+        """Initializes and generates the maze using a random or provided seed.
+        
+        Args:
+            seed (str | None, optional): A specific seed for maze generation. Defaults to None.
+        """
         # The maze is described with a 2D list of integers between 0 and 15.
         # The integers represent the walls of each cell in the grid, like
         # how Linux file permission numbers work. It's called a 4-bit bitmask.
@@ -35,6 +41,7 @@ class Maze:
         self.create_wall_rects()
     
     def generate(self) -> None:
+        """Carves out paths on the grid using a randomized depth-first search algorithm."""
         # Pick random starting point for the generation:
         start_x = self.rng.randint(0, c.GRID_SIZE - 1)
         start_y = self.rng.randint(0, c.GRID_SIZE - 1)
@@ -87,6 +94,7 @@ class Maze:
                 stack.pop()
     
     def find_starting_positions(self) -> None:
+        """Calculates optimal starting locations for the player, tower, and scarecrow using BFS."""
         # The player starts somewhere completely random:
         player_x = self.rng.randint(0, c.GRID_SIZE - 1)
         player_y = self.rng.randint(0, c.GRID_SIZE - 1)
@@ -171,6 +179,7 @@ class Maze:
             self.scarecrow_starting_position = furthest_cell_from_player
     
     def create_wall_rects(self) -> None:
+        """Generates rectangular collision hitboxes for all walls within the generated maze."""
         # Make dictionary to track the wall rects each grid cell has:
         self.wall_rects: defaultdict[Coordinate, list[pygame.Rect]] = defaultdict(list)
         thickness = 4
@@ -216,6 +225,11 @@ class Maze:
                                                     c.TILE_SIZE))
 
     def draw(self, surface: pygame.Surface) -> None:
+        """Renders the visible walls and boundaries of the maze to a surface.
+        
+        Args:
+            surface (pygame.Surface): The Pygame surface to draw the maze lines onto.
+        """
         for y in range(c.GRID_SIZE):
             for x in range(c.GRID_SIZE):
                 # Get the wall bitmask for the current cell:

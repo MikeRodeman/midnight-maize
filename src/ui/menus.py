@@ -3,11 +3,18 @@ import pygame
 import src.core.constants as c
 
 class MenuManager:
+    """Handles rendering and logic for all menu screens and overlays."""
     def __init__(
         self,
         large_font: pygame.font.Font,
         small_font: pygame.font.Font
         ) -> None:
+        """Initializes the MenuManager with specified fonts.
+        
+        Args:
+            large_font (pygame.font.Font): The font used for major headers.
+            small_font (pygame.font.Font): The font used for standard text.
+        """
         
         self.large_font = large_font
         self.small_font = small_font
@@ -29,12 +36,26 @@ class MenuManager:
         y_position: int,
         color: pygame.typing.ColorLike = c.WHITE
         ) -> None:
+        """Draws a line of text horizontally centered on the given surface.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the text onto.
+            text (str): The string of text to render.
+            font (pygame.font.Font): The font to use for rendering.
+            y_position (int): The vertical position to draw the text at.
+            color (pygame.typing.ColorLike, optional): The color of the text. Defaults to c.WHITE.
+        """
         
         surface = font.render(text, False, color)
         x_position = (c.LOGICAL_SCREEN_WIDTH // 2) - (surface.get_width() // 2)
         screen.blit(surface, (x_position, y_position))
 
     def draw_start_menu(self, screen: pygame.Surface) -> None:
+        """Draws the main starting menu.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the menu onto.
+        """
         screen.fill(c.BLACK)
         self.draw_text_centered(screen, "MIDNIGHT MAIZE", self.large_font, 50, (255, 50, 50))
         
@@ -49,6 +70,11 @@ class MenuManager:
             self.draw_text_centered(screen, option, self.small_font, 120 + (i * 30))
 
     def draw_paused_menu(self, screen: pygame.Surface) -> None:
+        """Draws the in-game pause menu.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the menu onto.
+        """
         screen.blit(self.overlay, (0, 0))
         self.draw_text_centered(screen, "PAUSED", self.large_font, 60)
         
@@ -63,6 +89,11 @@ class MenuManager:
             self.draw_text_centered(screen, option, self.small_font, 130 + (i * 25))
 
     def draw_story_screen(self, screen: pygame.Surface) -> None:
+        """Draws the screen displaying the game's story.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the screen onto.
+        """
         self.draw_overlay(screen)
         self.draw_text_centered(screen, "THE TALE", self.large_font, 50)
         
@@ -75,6 +106,11 @@ class MenuManager:
         self.draw_text_centered(screen, "[SPACE] NEXT   [BACKSPACE] BACK", self.small_font, 220)
 
     def draw_controls_screen(self, screen: pygame.Surface) -> None:
+        """Draws the controls and objective information screen.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the screen onto.
+        """
         self.draw_overlay(screen)
         self.draw_text_centered(screen, "HOW TO SURVIVE", self.large_font, 40)
         
@@ -93,6 +129,11 @@ class MenuManager:
             self.draw_text_centered(screen, line, self.small_font, 90 + (i * 20))
 
     def draw_enter_seed_screen(self, screen: pygame.Surface) -> None:
+        """Draws the screen allowing the player to input a custom maze seed.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the screen onto.
+        """
         self.draw_overlay(screen)
         self.draw_text_centered(screen, "TYPE CUSTOM SEED", self.large_font, 60)
         
@@ -107,6 +148,12 @@ class MenuManager:
         self.draw_text_centered(screen, "[ENTER] CONFIRM   [BACKSPACE] CANCEL", self.small_font, 180)
 
     def draw_current_seed_screen(self, screen: pygame.Surface, current_seed: str) -> None:
+        """Draws the screen displaying the current active maze seed.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the screen onto.
+            current_seed (str): The seed string of the active maze.
+        """
         self.draw_overlay(screen)
         self.draw_text_centered(screen, "MAP DATA", self.large_font, 70)
         self.draw_text_centered(screen, f"SEED: {current_seed}", self.small_font, 130, (255, 255, 100))
@@ -114,6 +161,11 @@ class MenuManager:
         self.draw_text_centered(screen, "[BACKSPACE] RETURN", self.small_font, 210)
 
     def draw_overlay(self, screen: pygame.Surface) -> None:
+        """Draws a dark semi-transparent overlay to darken the background.
+        
+        Args:
+            screen (pygame.Surface): The surface to apply the overlay to.
+        """
         screen.blit(self.overlay, (0, 0))
     
     def draw_results_screen(
@@ -125,6 +177,16 @@ class MenuManager:
         glow_sticks_left: int,
         current_seed: str
         ) -> None:
+        """Draws the end-game results screen displaying outcome and statistics.
+        
+        Args:
+            screen (pygame.Surface): The surface to draw the results onto.
+            won (bool): True if the player won, False if they lost.
+            time_string (str): Formatted string of the elapsed game time.
+            glow_sticks_used (int): The amount of glow sticks used by the player.
+            glow_sticks_left (int): The amount of glow sticks the player had remaining.
+            current_seed (str): The seed string of the completed maze.
+        """
         
         self.draw_overlay(screen)
 

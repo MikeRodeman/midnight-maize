@@ -8,6 +8,16 @@ def calculate_astar(
     start_cell: Coordinate,
     goal_cell: Coordinate
     ) -> list[Coordinate]:
+    """Calculates the shortest path between two points in the maze using the A* algorithm.
+    
+    Args:
+        maze_grid (list[list[int]]): The 2D array containing maze wall bitmasks.
+        start_cell (Coordinate): The (x, y) starting grid coordinates.
+        goal_cell (Coordinate): The (x, y) target grid coordinates.
+        
+    Returns:
+        list[Coordinate]: An ordered list of grid coordinates representing the path from start to goal.
+    """
     
     # Keep track of cells we've seen but haven't explored yet:
     to_visit_list: list[Coordinate] = []
@@ -65,12 +75,30 @@ def calculate_astar(
     return [] # Means scarecrow is trapped somehow
 
 def get_manhattan_distance(cell_a: Coordinate, cell_b: Coordinate) -> int:
+    """Calculates the Manhattan distance between two grid cells.
+    
+    Args:
+        cell_a (Coordinate): The first grid coordinate.
+        cell_b (Coordinate): The second grid coordinate.
+        
+    Returns:
+        int: The computed Manhattan distance.
+    """
     return abs(cell_a[0] - cell_b[0]) + abs(cell_a[1] - cell_b[1])
 
 def reconstruct_path(
     trail_map: dict[Coordinate, Coordinate],
     current_cell: Coordinate
     ) -> list[Coordinate]:
+    """Rebuilds the path backward from the goal to the start using tracked history.
+    
+    Args:
+        trail_map (dict[Coordinate, Coordinate]): A dictionary mapping visited cells to their origin cells.
+        current_cell (Coordinate): The destination cell to start backtracking from.
+        
+    Returns:
+        list[Coordinate]: An ordered list of coordinates describing the full path.
+    """
     
     path = []
     while current_cell in trail_map:

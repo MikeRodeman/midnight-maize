@@ -6,7 +6,13 @@ from src.core.custom_types import Coordinate
 from src.entities.glow_stick import GlowStick
 
 class Player(pygame.sprite.Sprite):
+    """Represents the player character controlled by the user."""
     def __init__(self, starting_grid_position: Coordinate) -> None:
+        """Initializes the Player entity.
+        
+        Args:
+            starting_grid_position (Coordinate): The starting (x, y) grid coordinates for the player.
+        """
         # Call parent constructor:
         super().__init__()
 
@@ -36,15 +42,30 @@ class Player(pygame.sprite.Sprite):
         self.glow_sticks_used = 0
     
     @property
-    def current_grid_position(self):
+    def current_grid_position(self) -> Coordinate:
+        """Gets the player's current logical position on the grid.
+        
+        Returns:
+            Coordinate: The current (x, y) grid coordinates.
+        """
         return (int(self.pos_x // c.TILE_SIZE), int(self.pos_y // c.TILE_SIZE))
 
     @property
     def stamina(self) -> float:
+        """Gets the current stamina level of the player.
+        
+        Returns:
+            float: The current stamina value.
+        """
         return self._stamina
     
     @stamina.setter
     def stamina(self, value: float) -> None:
+        """Sets the player's stamina level and updates exhaustion status.
+        
+        Args:
+            value (float): The new stamina value to apply.
+        """
         self._stamina = max(0.0, min(value, c.MAX_STAMINA))
 
         if self._stamina <= 0:
@@ -53,6 +74,11 @@ class Player(pygame.sprite.Sprite):
             self.is_exhausted = False
 
     def update(self, maze: Maze) -> None:
+        """Updates the player's movement, stamina, and collisions for the current frame.
+        
+        Args:
+            maze (Maze): The current maze instance used for collision detection.
+        """
         keys = pygame.key.get_pressed()
 
         can_run = (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and not self.is_exhausted
@@ -90,6 +116,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.hitbox_rect.center
     
     def handle_collision(self, maze: Maze, axis: str, delta: float) -> None:
+        """Resolves collisions between the player and maze walls along a specified axis.
+        
+        Args:
+            maze (Maze): The current maze instance providing wall rectangles.
+            axis (str): The axis being checked for collision ('x' or 'y').
+            delta (float): The amount of movement along the axis.
+        """
         # Instead of checking all walls, check just the walls
         # in the current cell and the 8 neighboring cells:
         wall_rects_to_check: list[pygame.Rect] = []
@@ -122,7 +155,11 @@ class Player(pygame.sprite.Sprite):
                     self.pos_y = self.hitbox_rect.centery
 
     def drop_glow_stick(self) -> GlowStick | None:
-        """Create a glow stick at the player's current center if any are left."""
+        """Creates and returns a new GlowStick at the player's location if inventory allows.
+        
+        Returns:
+            GlowStick | None: The newly created GlowStick instance, or None if out of glow sticks.
+        """
         if self.glow_sticks_left > 0:
             self.glow_sticks_left -= 1
             self.glow_sticks_used += 1      

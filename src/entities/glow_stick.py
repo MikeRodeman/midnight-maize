@@ -4,7 +4,13 @@ import src.core.constants as c
 from src.core.custom_types import Coordinate
 
 class GlowStick(pygame.sprite.Sprite):
+    """Represents a dropped glow stick that provides light and attracts the scarecrow."""
     def __init__(self, pixel_position: Coordinate) -> None:
+        """Initializes a new glow stick at the given pixel coordinates.
+        
+        Args:
+            pixel_position (Coordinate): The (x, y) pixel coordinates to place the glow stick.
+        """
         super().__init__()
 
         # Pixel art:

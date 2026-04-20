@@ -6,7 +6,9 @@ import src.core.constants as c
 from src.entities.player import Player
 
 class Sidebar:
+    """Renders the game's sidebar UI displaying player stats and time."""
     def __init__(self) -> None:
+        """Initializes the sidebar dimensions, font, and positioning."""
         # Start where the maze ends at the right.
         self.rect = pygame.Rect(c.MAZE_WIDTH, 0, c.SIDEBAR_WIDTH, c.LOGICAL_SCREEN_HEIGHT)
 
@@ -17,6 +19,13 @@ class Sidebar:
             self.font = pygame.font.SysFont(None, 16)
     
     def draw(self, surface: pygame.Surface, player: Player, elapsed_ticks: int) -> None:
+        """Draws the sidebar and its information onto the target surface.
+        
+        Args:
+            surface (pygame.Surface): The main display surface to draw on.
+            player (Player): The player instance to read stats from.
+            elapsed_ticks (int): The amount of time elapsed in the current game, in milliseconds.
+        """
         # Draw background:
         pygame.draw.rect(surface, c.SIDEBAR_COLOR, self.rect)
 

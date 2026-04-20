@@ -12,7 +12,9 @@ from src.ui.menus import MenuManager
 from src.ui.sidebar import Sidebar
 
 class Game:
+    """The main application class that manages game states, loops, and rendering."""
     def __init__(self) -> None:
+        """Initializes the Pygame engine, display settings, UI elements, and core managers."""
         pygame.init()
         self.screen = pygame.display.set_mode(
             (c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT),
@@ -46,17 +48,32 @@ class Game:
     
     @property
     def state(self) -> c.GameState:
-        """Always returns the current active state (top of stack)."""
+        """Gets the current active game state.
+        
+        Returns:
+            c.GameState: The active state at the top of the state stack.
+        """
         return self.state_stack[-1]
 
     def change_state(self, new_state: c.GameState) -> None:
+        """Pushes a new state onto the state stack to make it active.
+        
+        Args:
+            new_state (c.GameState): The state to transition to.
+        """
         self.state_stack.append(new_state)
 
     def go_back(self) -> None:
+        """Pops the current state from the stack, reverting to the previous state."""
         if len(self.state_stack) > 1:
             self.state_stack.pop()
     
     def new_game(self, seed: str = None) -> None:
+        """Initializes a new game session with a fresh maze and entities.
+        
+        Args:
+            seed (str, optional): A specific map seed to use for generation. Defaults to None.
+        """
         self.maze = Maze(seed)
         self.sidebar = Sidebar()
 
@@ -90,9 +107,11 @@ class Game:
         self.maze.draw(self.background_surface)
         
     def handle_events(self) -> None:
+        """Processes all input events through the EventHandler."""
         self.event_handler.process_events()
     
     def draw_screen(self) -> None:
+        """Renders the game world, UI, and menus to the screen based on the active state."""
         # Always draw the game world in the background (except start menu):
         if self.state != c.GameState.START_MENU:
             self.screen.blit(self.background_surface, (0, 0))
@@ -150,6 +169,7 @@ class Game:
         pygame.display.flip()
 
     def update(self) -> None:
+        """Updates the timing, game logic, and entities for the active frame."""
         # Calculate how much time has passed since last loop:
         current_ticks = pygame.time.get_ticks()
         delta_time = current_ticks - self.last_frame_ticks
@@ -174,6 +194,11 @@ class Game:
                 self.show_results(True)
     
     def show_results(self, won: bool) -> None:
+        """Calculates final game statistics and transitions to the results screen.
+        
+        Args:
+            won (bool): True if the player reached the lookout tower, False if caught by the scarecrow.
+        """
         # Calculate final stats:
         total_seconds = self.elapsed_ticks / 1000 # Seconds
         minutes = int(total_seconds / 60)
@@ -195,6 +220,7 @@ class Game:
         self.state_stack = [c.GameState.RESULTS_SCREEN]
 
     def run(self) -> None:
+        """Starts and maintains the main game loop."""
         while self.running:
             self.handle_events()
             self.update()

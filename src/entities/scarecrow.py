@@ -10,12 +10,19 @@ from src.entities.player import Player
 from src.utils.astar import calculate_astar
 
 class ScarecrowState(Enum):
+    """Represents the various behavioral states of the Scarecrow."""
     DORMANT = 0
     WANDER = 1
     INVESTIGATE = 2
     CHASE = 3
 class Scarecrow(pygame.sprite.Sprite):
+    """The main antagonist entity that navigates the maze to hunt the player."""
     def __init__(self, starting_grid_position: Coordinate) -> None:
+        """Initializes the Scarecrow at a given position.
+        
+        Args:
+            starting_grid_position (Coordinate): The initial (x, y) grid coordinates for the Scarecrow.
+        """
         # Call parent constructor:
         super().__init__()
 
@@ -55,11 +62,21 @@ class Scarecrow(pygame.sprite.Sprite):
         self.state: ScarecrowState = ScarecrowState.WANDER
 
     @property
-    def state(self):
+    def state(self) -> ScarecrowState:
+        """Gets the current state of the Scarecrow.
+        
+        Returns:
+            ScarecrowState: The current active state.
+        """
         return self._state
 
     @state.setter
-    def state(self, new_state):
+    def state(self, new_state: ScarecrowState) -> None:
+        """Sets a new state for the Scarecrow and applies related speed and pathing resets.
+        
+        Args:
+            new_state (ScarecrowState): The new state to transition into.
+        """
         if self._state != new_state:
             self._state = new_state
             self.path.clear() # Ensure path is always reset on state change
@@ -72,6 +89,12 @@ class Scarecrow(pygame.sprite.Sprite):
                 self.speed = c.SCARECROW_SPEED
 
     def update(self, maze: Maze, player: Player) -> None:
+        """Updates the Scarecrow's logic, vision, and movement for the current frame.
+        
+        Args:
+            maze (Maze): The current maze instance.
+            player (Player): The player instance to check line of sight against.
+        """
         # Always check if we can see the player:
         self.check_for_player(player, maze)
 
@@ -83,7 +106,7 @@ class Scarecrow(pygame.sprite.Sprite):
             self.follow_path(maze)
     
     def move_to_adjacent_cell_center(self) -> None:
-        """The Legs: Move rect center from current cell to the exact center of adjacent cell."""
+        """Moves the Scarecrow's rect center smoothly towards the exact center of the target adjacent cell."""
         target_px_x = self.target_grid_cell[0] * c.TILE_SIZE + c.TILE_SIZE // 2
         target_px_y = self.target_grid_cell[1] * c.TILE_SIZE + c.TILE_SIZE // 2
 
@@ -107,7 +130,11 @@ class Scarecrow(pygame.sprite.Sprite):
             self.current_grid_cell = self.target_grid_cell
     
     def follow_path(self, maze: Maze) -> None:
-        """The Manager: Feed the next cell to the Legs."""
+        """Feeds the next target cell from the calculated path to the movement logic.
+        
+        Args:
+            maze (Maze): The current maze instance.
+        """
         # If path is empty, ask the Brain for new path:
         if not self.path:
             self.calculate_path(maze)
@@ -117,7 +144,11 @@ class Scarecrow(pygame.sprite.Sprite):
             self.target_grid_cell = self.path.pop(0)
     
     def calculate_path(self, maze: Maze) -> None:
-        """The Brain: Calculate path to follow based on current state."""
+        """Calculates the path for the Scarecrow to follow based on its current state and target.
+        
+        Args:
+            maze (Maze): The current maze instance to navigate.
+        """
 
         # Active chase, player in sight:
         if self.state == ScarecrowState.CHASE and self.target_player_grid_position:
@@ -139,6 +170,14 @@ class Scarecrow(pygame.sprite.Sprite):
                 self.path.append(next_cell)
 
     def calculate_wander_move(self, maze: Maze) -> Coordinate | None:
+        """Determines the next valid adjacent cell to move to while wandering.
+        
+        Args:
+            maze (Maze): The current maze instance to check walls.
+            
+        Returns:
+            Coordinate | None: The (x, y) grid coordinates of the chosen adjacent cell, or None if no move is possible.
+        """
         current_grid_x, current_grid_y = self.current_grid_cell
         walls_bitmask = maze.grid[current_grid_y][current_grid_x]
 
@@ -164,7 +203,11 @@ class Scarecrow(pygame.sprite.Sprite):
         return None
 
     def investigate_glow_stick(self, grid_position: Coordinate) -> None:
-        """Called by main.py when a glow stick is dropped."""
+        """Changes state to investigate a newly dropped glow stick unless already chasing the player.
+        
+        Args:
+            grid_position (Coordinate): The (x, y) grid coordinates of the dropped glow stick.
+        """
 
         # Ignore glow sticks if chasing the player:
         if self.state == ScarecrowState.CHASE:
@@ -174,6 +217,12 @@ class Scarecrow(pygame.sprite.Sprite):
         self.target_glow_stick_grid_position = grid_position
     
     def check_for_player(self, player: Player, maze: Maze) -> None:
+        """Checks if the Scarecrow can detect the player via proximity or line of sight.
+        
+        Args:
+            player (Player): The player instance to check for.
+            maze (Maze): The current maze instance to check for walls blocking line of sight.
+        """
         # Proximity check ignoring walls:
         player_center_vector = pygame.math.Vector2(player.rect.center)
         scarecrow_center_vector = pygame.math.Vector2(self.rect.center)
@@ -213,6 +262,15 @@ class Scarecrow(pygame.sprite.Sprite):
                     self.target_player_grid_position = None
     
     def has_line_of_sight(self, player: Player, maze: Maze) -> bool:
+        """Determines if there is a clear line of sight between the Scarecrow and the Player.
+        
+        Args:
+            player (Player): The player instance to look for.
+            maze (Maze): The current maze instance containing wall data.
+            
+        Returns:
+            bool: True if line of sight is clear, False otherwise.
+        """
         player_grid_x, player_grid_y = player.current_grid_position
         scarecrow_grid_x, scarecrow_grid_y = self.current_grid_cell
 
@@ -245,5 +303,10 @@ class Scarecrow(pygame.sprite.Sprite):
         return False
     
     def start_chase(self, player_grid_position: Coordinate) -> None:
+        """Initiates the chase state and sets the player as the target.
+        
+        Args:
+            player_grid_position (Coordinate): The current (x, y) grid coordinates of the player.
+        """
         self.state = ScarecrowState.CHASE
         self.target_player_grid_position = player_grid_position
