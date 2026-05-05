@@ -16,9 +16,14 @@ class Game:
     def __init__(self) -> None:
         """Initializes the Pygame engine, display settings, UI elements, and core managers."""
         pygame.init()
+
         self.screen = pygame.display.set_mode(
             (c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT),
-            pygame.SCALED | pygame.RESIZABLE)
+            pygame.RESIZABLE)
+
+        # Surface to draw everything on before scaling smoothly to the size of the screen:
+        self.virtual_surface = pygame.Surface((c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT))
+
         pygame.display.set_caption("Midnight Maize")
         self.clock = pygame.time.Clock()
 
@@ -110,13 +115,39 @@ class Game:
         """Processes all input events through the EventHandler."""
         self.event_handler.process_events()
     
+    def get_scaled_rect(self) -> pygame.Rect:
+        """Calculates the size of the rect for the scaled virtual surface.
+        
+        Returns:
+            pygame.Rect: The rect for the scaled virtual surface.
+        """
+        window_width, window_height = self.screen.get_size()
+
+        width_scale = window_width / c.LOGICAL_SCREEN_WIDTH
+        height_scale = window_height / c.LOGICAL_SCREEN_HEIGHT
+
+        scale = min(width_scale, height_scale)
+
+        new_width = int(c.LOGICAL_SCREEN_WIDTH * scale)
+        new_height = int(c.LOGICAL_SCREEN_HEIGHT * scale)
+        
+        # Center on self.screen:
+        return pygame.Rect(
+            (window_width - new_width) // 2,
+            (window_height - new_height) // 2,
+            new_width,
+            new_height)
+
     def draw_screen(self) -> None:
         """Renders the game world, UI, and menus to the screen based on the active state."""
+        # Clear the virtual surface first:
+        self.virtual_surface.fill(c.BLACK)
+
         # Always draw the game world in the background (except start menu):
         if self.state != c.GameState.START_MENU:
-            self.screen.blit(self.background_surface, (0, 0))
-            self.character_sprites.draw(self.screen)
-            self.glow_stick_sprites.draw(self.screen)
+            self.virtual_surface.blit(self.background_surface, (0, 0))
+            self.character_sprites.draw(self.virtual_surface)
+            self.glow_stick_sprites.draw(self.virtual_surface)
 
             # Fill the nightfall surface with a really dark blue:
             self.nightfall.fill((5, 5, 12))
@@ -138,33 +169,45 @@ class Game:
                             c.GLOW_STICK_LIGHT_RADIUS)
 
             # Draw the nightfall over the maze:
-            self.screen.blit(self.nightfall, (0, 0))
+            self.virtual_surface.blit(self.nightfall, (0, 0))
 
             # Draw sidebar after nightfall is drawn so it stays on top:
-            self.sidebar.draw(self.screen, self.player, self.elapsed_ticks)
+            self.sidebar.draw(self.virtual_surface, self.player, self.elapsed_ticks)
 
         # Route the drawing based on the active state:
         if self.state == c.GameState.START_MENU:
-            self.menus.draw_start_menu(self.screen)
+            self.menus.draw_start_menu(self.virtual_surface)
         elif self.state == c.GameState.PAUSED_MENU:
-            self.menus.draw_paused_menu(self.screen)
+            self.menus.draw_paused_menu(self.virtual_surface)
         elif self.state == c.GameState.STORY_SCREEN:
-            self.menus.draw_story_screen(self.screen)
+            self.menus.draw_story_screen(self.virtual_surface)
         elif self.state == c.GameState.CONTROLS_SCREEN:
-            self.menus.draw_controls_screen(self.screen)
+            self.menus.draw_controls_screen(self.virtual_surface)
         elif self.state == c.GameState.ENTER_SEED_SCREEN:
-            self.menus.draw_enter_seed_screen(self.screen)
+            self.menus.draw_enter_seed_screen(self.virtual_surface)
         elif self.state == c.GameState.CURRENT_SEED_SCREEN:
-            self.menus.draw_current_seed_screen(self.screen, self.maze.seed)
+            self.menus.draw_current_seed_screen(self.virtual_surface, self.maze.seed)
         elif self.state == c.GameState.RESULTS_SCREEN:
             self.menus.draw_results_screen(
-                self.screen, 
+                self.virtual_surface, 
                 self.last_result_won, 
                 self.last_result_time_string, 
                 self.last_result_sticks_used, 
                 self.last_result_sticks_left, 
                 self.maze.seed
             )
+
+        # Clear the actual screen:
+        self.screen.fill(c.BLACK)
+
+        # Get the centered rect for the scaled virtual surface based on the current screen size:
+        dest_rect = self.get_scaled_rect()
+
+        # Scale the virtual surface up to the destination size:
+        scaled_frame = pygame.transform.scale(self.virtual_surface, dest_rect.size)
+
+        # Blit the scaled frame onto the physical screen at the centered position:
+        self.screen.blit(scaled_frame, dest_rect.topleft)
 
         pygame.display.flip()
 
