@@ -133,7 +133,7 @@ class Player(pygame.sprite.Sprite):
             for j in range(-1, 2):
                 neighbor_x, neighbor_y = grid_x + i, grid_y + j
 
-                if 0 <= neighbor_x < c.GRID_SIZE and 0 <= neighbor_y < c.GRID_SIZE:
+                if 0 <= neighbor_x < c.GRID_WIDTH and 0 <= neighbor_y < c.GRID_HEIGHT:
                     wall_rects = maze.wall_rects[(neighbor_x, neighbor_y)]
                     wall_rects_to_check.extend(wall_rects)
         

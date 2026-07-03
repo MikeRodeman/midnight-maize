@@ -10,7 +10,7 @@ class Sidebar:
     def __init__(self) -> None:
         """Initializes the sidebar dimensions, font, and positioning."""
         # Start where the maze ends at the right.
-        self.rect = pygame.Rect(c.MAZE_WIDTH, 0, c.SIDEBAR_WIDTH, c.LOGICAL_SCREEN_HEIGHT)
+        self.rect = pygame.Rect(c.LOGICAL_SCREEN_WIDTH - c.SIDEBAR_WIDTH, 0, c.SIDEBAR_WIDTH, c.LOGICAL_SCREEN_HEIGHT)
 
         if os.path.exists(c.SMALL_FONT_PATH):
             self.font = pygame.font.Font(c.SMALL_FONT_PATH, 16)

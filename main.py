@@ -18,7 +18,7 @@ class Game:
         pygame.init()
 
         self.screen = pygame.display.set_mode(
-            (c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT),
+            (c.STARTING_WINDOW_WIDTH, c.STARTING_WINDOW_HEIGHT),
             pygame.RESIZABLE)
 
         # Surface to draw everything on before scaling smoothly to the size of the screen:

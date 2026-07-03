@@ -19,7 +19,7 @@ class Maze:
         # how Linux file permission numbers work. It's called a 4-bit bitmask.
         #
         # 1 (0001) = North, 2 (0010) = East, 4 (0100) = South, 8 (1000) = West.
-        self.grid: list[list[int]] = [[15 for _ in range(c.GRID_SIZE)] for _ in range(c.GRID_SIZE)]
+        self.grid: list[list[int]] = [[15 for _ in range(c.GRID_WIDTH)] for _ in range(c.GRID_HEIGHT)]
 
         # If no player doesn't give a seed, generate a random one:
         if not seed:
@@ -43,8 +43,8 @@ class Maze:
     def generate(self) -> None:
         """Carves out paths on the grid using a randomized depth-first search algorithm."""
         # Pick random starting point for the generation:
-        start_x = self.rng.randint(0, c.GRID_SIZE - 1)
-        start_y = self.rng.randint(0, c.GRID_SIZE - 1)
+        start_x = self.rng.randint(0, c.GRID_WIDTH - 1)
+        start_y = self.rng.randint(0, c.GRID_HEIGHT - 1)
         start_cell = (start_x, start_y)
 
         # Start a ball of yarn to keep track of the current path we're on:
@@ -66,7 +66,7 @@ class Maze:
                 neighbor_x = current_x + dx
                 neighbor_y = current_y + dy
             
-                is_inside_grid = 0 <= neighbor_x < c.GRID_SIZE and 0 <= neighbor_y < c.GRID_SIZE
+                is_inside_grid = 0 <= neighbor_x < c.GRID_WIDTH and 0 <= neighbor_y < c.GRID_HEIGHT
 
                 if is_inside_grid and (neighbor_x, neighbor_y) not in visited:
                     unvisited_neighbors.append((direction_bit, neighbor_x, neighbor_y))
@@ -96,8 +96,8 @@ class Maze:
     def find_starting_positions(self) -> None:
         """Calculates optimal starting locations for the player, tower, and scarecrow using BFS."""
         # The player starts somewhere completely random:
-        player_x = self.rng.randint(0, c.GRID_SIZE - 1)
-        player_y = self.rng.randint(0, c.GRID_SIZE - 1)
+        player_x = self.rng.randint(0, c.GRID_WIDTH - 1)
+        player_y = self.rng.randint(0, c.GRID_HEIGHT - 1)
         self.player_starting_position = (player_x, player_y)
 
         # Use breadth-first search to find the furthest cell from the
@@ -190,16 +190,16 @@ class Maze:
         west_border = pygame.Rect(0, 0, thickness // 2, c.MAZE_HEIGHT)
         east_border = pygame.Rect(c.MAZE_WIDTH - thickness // 2, 0, thickness // 2, c.MAZE_HEIGHT)
 
-        for y in range(c.GRID_SIZE):
-            for x in range(c.GRID_SIZE):
+        for y in range(c.GRID_HEIGHT):
+            for x in range(c.GRID_WIDTH):
                 if y == 0:
                     self.wall_rects[(x, y)].append(north_border)
-                elif y == c.GRID_SIZE - 1:
+                elif y == c.GRID_HEIGHT - 1:
                     self.wall_rects[(x, y)].append(south_border)
                 
                 if x == 0:
                     self.wall_rects[(x, y)].append(west_border)
-                elif x == c.GRID_SIZE - 1:
+                elif x == c.GRID_WIDTH - 1:
                     self.wall_rects[(x, y)].append(east_border)
 
                 # Get the wall bitmask for the current cell:
@@ -230,8 +230,8 @@ class Maze:
         Args:
             surface (pygame.Surface): The Pygame surface to draw the maze lines onto.
         """
-        for y in range(c.GRID_SIZE):
-            for x in range(c.GRID_SIZE):
+        for y in range(c.GRID_HEIGHT):
+            for x in range(c.GRID_WIDTH):
                 # Get the wall bitmask for the current cell:
                 walls_bitmask = self.grid[y][x]
 
@@ -243,13 +243,13 @@ class Maze:
 
                 # We only need to check the South and East walls for each cell, because the
                 # North and West walls will be the South and West walls for a neighboring cell:
-                if walls_bitmask & c.S or y == c.GRID_SIZE - 1:
+                if walls_bitmask & c.S or y == c.GRID_HEIGHT - 1:
 
                     # Correct for 0-indexing mismatch on the last pixel.
                     # A window N pixels wide has indices 0 to N - 1, not N:
                     draw_y = min(bottom_y, c.MAZE_HEIGHT - 1)
                     pygame.draw.line(surface, c.CORN_WALL_COLOR, (left_x, draw_y), (right_x, draw_y))
-                if walls_bitmask & c.E or x == c.GRID_SIZE - 1:
+                if walls_bitmask & c.E or x == c.GRID_WIDTH - 1:
                     draw_x = min(right_x, c.MAZE_WIDTH - 1)
                     pygame.draw.line(surface, c.CORN_WALL_COLOR, (draw_x, top_y), (draw_x, bottom_y))
 
