@@ -76,17 +76,17 @@ class EventHandler:
         Args:
             event (pygame.Event): The Pygame keydown event being processed.
         """
-        if event.key == pygame.K_s:
+        if event.key == pygame.K_SPACE:
             self.game.new_game() # Generate new random maze
             self.game.state_stack = [c.GameState.PLAYING] # Clear stack and play
-        elif event.key == pygame.K_e:
+        elif event.key == pygame.K_1:
             self.game.change_state(c.GameState.ENTER_SEED_SCREEN)
-        elif event.key == pygame.K_t:
+        elif event.key == pygame.K_2:
             self.game.menus.current_story_page = 0
             self.game.change_state(c.GameState.STORY_SCREEN)
-        elif event.key == pygame.K_c:
+        elif event.key == pygame.K_3:
             self.game.change_state(c.GameState.CONTROLS_SCREEN)
-        elif event.key == pygame.K_q:
+        elif event.key == pygame.K_ESCAPE:
             self.game.running = False
 
     def handle_paused_menu(self, event: pygame.Event) -> None:
@@ -97,16 +97,18 @@ class EventHandler:
         """
         if event.key == pygame.K_ESCAPE:
             self.game.go_back() # Pop pause menu, resume playing
-        elif event.key == pygame.K_r:
+        elif event.key == pygame.K_1:
+            self.game.change_state(c.GameState.CONTROLS_SCREEN)
+        elif event.key == pygame.K_2:
             self.game.new_game(self.game.maze.seed) # Reset current maze
             self.game.state_stack = [c.GameState.PLAYING]
-        elif event.key == pygame.K_n:
+        elif event.key == pygame.K_3:
             self.game.new_game() # Start new maze
             self.game.state_stack = [c.GameState.PLAYING]
-        elif event.key == pygame.K_v:
-            self.game.change_state(c.GameState.CURRENT_SEED_SCREEN)
-        elif event.key == pygame.K_q:
+        elif event.key == pygame.K_4:
             self.game.state_stack = [c.GameState.START_MENU] # Reset stack, go to main menu
+        elif event.key == pygame.K_BACKSPACE:
+            self.game.running = False
 
     def handle_story_screen(self, event: pygame.Event) -> None:
         """Handles input events when navigating pages on the story screen.
@@ -116,11 +118,14 @@ class EventHandler:
         """
         if event.key == pygame.K_SPACE:
             self.game.menus.current_story_page += 1
-            if self.game.menus.current_story_page >= len(self.game.menus.story_pages):
-                self.game.menus.current_story_page = 0
-                self.game.go_back() # Go back to whatever menu we came from
         elif event.key == pygame.K_BACKSPACE:
+            self.game.menus.current_story_page -= 1
+        elif event.key == pygame.K_ESCAPE:
+            self.game.menus.current_story_page = 0
             self.game.go_back()
+        
+        self.game.menus.current_story_page %= len(self.game.menus.story_pages)
+
 
     def handle_controls_screen(self, event: pygame.Event) -> None:
         """Handles input events when viewing the controls screen.
@@ -128,7 +133,7 @@ class EventHandler:
         Args:
             event (pygame.Event): The Pygame keydown event being processed.
         """
-        if event.key == pygame.K_BACKSPACE:
+        if event.key == pygame.K_ESCAPE:
             self.game.go_back()
 
     def handle_enter_seed(self, event: pygame.Event) -> None:
@@ -137,7 +142,9 @@ class EventHandler:
         Args:
             event (pygame.Event): The Pygame keydown event being processed.
         """
-        if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
+        if event.key == pygame.K_ESCAPE:
+            self.game.go_back()
+        elif event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
             # Start game with custom seed
             seed_to_use = self.game.menus.seed_input_text if self.game.menus.seed_input_text else None
             self.game.new_game(seed_to_use)
@@ -159,7 +166,7 @@ class EventHandler:
         Args:
             event (pygame.Event): The Pygame keydown event being processed.
         """
-        if event.key == pygame.K_BACKSPACE:
+        if event.key == pygame.K_ESCAPE:
             self.game.go_back()
     
     def handle_results_screen(self, event: pygame.Event) -> None:
@@ -168,13 +175,15 @@ class EventHandler:
         Args:
             event (pygame.Event): The Pygame keydown event being processed.
         """
-        if event.key == pygame.K_r:
-            self.game.new_game(self.game.maze.seed) # Reset current maze
-            self.game.state_stack = [c.GameState.PLAYING]
-        elif event.key == pygame.K_n:
+        if event.key == pygame.K_SPACE:
             self.game.new_game() # Start new maze
             self.game.state_stack = [c.GameState.PLAYING]
-        elif event.key == pygame.K_e:
+        elif event.key == pygame.K_1:
+            self.game.new_game(self.game.maze.seed) # Reset current maze
+            self.game.state_stack = [c.GameState.PLAYING]
+        elif event.key == pygame.K_2:
+            self.game.change_state(c.GameState.CURRENT_SEED_SCREEN)
+        elif event.key == pygame.K_3:
             self.game.change_state(c.GameState.ENTER_SEED_SCREEN)
-        elif event.key == pygame.K_q:
+        elif event.key == pygame.K_ESCAPE:
             self.game.state_stack = [c.GameState.START_MENU] # Reset stack, go to main menu

@@ -60,11 +60,11 @@ class MenuManager:
         self.draw_text_centered(screen, "MIDNIGHT MAIZE", self.large_font, 50, (255, 50, 50))
         
         options = [
-            "[S] START NEW GAME",
-            "[E] ENTER CUSTOM SEED",
-            "[T] READ THE STORY",
-            "[C] VIEW CONTROLS",
-            "[Q] QUIT TO DESKTOP"
+            "[SPACE] START NEW GAME",
+            "[1] ENTER CUSTOM SEED",
+            "[2] READ THE STORY",
+            "[3] VIEW CONTROLS",
+            "[ESC] QUIT GAME"
         ]
         for i, option in enumerate(options):
             self.draw_text_centered(screen, option, self.small_font, 120 + (i * 30))
@@ -80,13 +80,14 @@ class MenuManager:
         
         options = [
             "[ESC] RESUME",
-            "[R] RESTART CURRENT MAP",
-            "[N] START NEW RANDOM MAP",
-            "[V] VIEW CURRENT SEED",
-            "[Q] QUIT TO MAIN MENU"
+            "[1] VIEW CONTROLS",
+            "[2] RESTART CURRENT MAZE",
+            "[3] START NEW MAZE",
+            "[4] QUIT TO MAIN MENU",
+            "[BACKSPACE] QUIT GAME"
         ]
         for i, option in enumerate(options):
-            self.draw_text_centered(screen, option, self.small_font, 130 + (i * 25))
+            self.draw_text_centered(screen, option, self.small_font, 100 + (i * 25))
 
     def draw_story_screen(self, screen: pygame.Surface) -> None:
         """Draws the screen displaying the game's story.
@@ -99,11 +100,15 @@ class MenuManager:
         
         # Draw current page
         p_text = self.story_pages[self.current_story_page]
-        self.draw_text_centered(screen, p_text, self.small_font, 120)
+
+        for i, line in enumerate(p_text):
+            self.draw_text_centered(screen, line, self.small_font, 120 + (i * 20))
         
-        footer = f"PAGE {self.current_story_page + 1} OF {len(self.story_pages)}"
-        self.draw_text_centered(screen, footer, self.small_font, 180, (150, 150, 150))
-        self.draw_text_centered(screen, "[SPACE] NEXT   [BACKSPACE] BACK", self.small_font, 220)
+        footer = f"{self.current_story_page + 1} / {len(self.story_pages)}"
+        self.draw_text_centered(screen, footer, self.small_font, 200, (150, 150, 150))
+        self.draw_text_centered(screen, "[SPACE] NEXT  /  [BACKSPACE] PREVIOUS", self.small_font, 260)
+        self.draw_text_centered(screen, "[ESC] RETURN", self.small_font, 300)
+
 
     def draw_controls_screen(self, screen: pygame.Surface) -> None:
         """Draws the controls and objective information screen.
@@ -123,7 +128,7 @@ class MenuManager:
             "OBJECTIVE: FIND THE LOOKOUT TOWER",
             f"SCARECROW WAKES AFTER {c.GRACE_PERIOD}s OR {c.GRACE_GLOW_STICKS_AMOUNT} STICKS DROPPED",
             "",
-            "[BACKSPACE] RETURN"
+            "[ESC] RETURN"
         ]
         for i, line in enumerate(controls):
             self.draw_text_centered(screen, line, self.small_font, 90 + (i * 20))
@@ -145,7 +150,7 @@ class MenuManager:
         input_surface = self.small_font.render(self.seed_input_text + "_", False, (50, 255, 50))
         screen.blit(input_surface, (box_rect.x + 5, box_rect.y + 7))
         
-        self.draw_text_centered(screen, "[ENTER] CONFIRM   [BACKSPACE] CANCEL", self.small_font, 180)
+        self.draw_text_centered(screen, "[ENTER] CONFIRM   [ESC] CANCEL", self.small_font, 180)
 
     def draw_current_seed_screen(self, screen: pygame.Surface, current_seed: str) -> None:
         """Draws the screen displaying the current active maze seed.
@@ -155,10 +160,10 @@ class MenuManager:
             current_seed (str): The seed string of the active maze.
         """
         self.draw_overlay(screen)
-        self.draw_text_centered(screen, "MAP DATA", self.large_font, 70)
+        self.draw_text_centered(screen, "MAZE DATA", self.large_font, 70)
         self.draw_text_centered(screen, f"SEED: {current_seed}", self.small_font, 130, (255, 255, 100))
         self.draw_text_centered(screen, "SHARE THIS WITH FRIENDS", self.small_font, 160)
-        self.draw_text_centered(screen, "[BACKSPACE] RETURN", self.small_font, 210)
+        self.draw_text_centered(screen, "[ESC] RETURN", self.small_font, 210)
 
     def draw_overlay(self, screen: pygame.Surface) -> None:
         """Draws a dark semi-transparent overlay to darken the background.
@@ -206,14 +211,15 @@ class MenuManager:
         self.draw_text_centered(screen, f"TIME: {time_string}", self.small_font, 120, (200, 200, 200))
         self.draw_text_centered(screen, f"STICKS USED: {glow_sticks_used}", self.small_font, 140, (200, 200, 200))
         self.draw_text_centered(screen, f"STICKS LEFT: {glow_sticks_left}", self.small_font, 160, (200, 200, 200))
-        self.draw_text_centered(screen, f"MAP SEED: {current_seed}", self.small_font, 190, (255, 255, 100))
+        self.draw_text_centered(screen, f"MAZE SEED: {current_seed}", self.small_font, 190, (255, 255, 100))
 
         # Options
         options = [
-            "[R] RETRY CURRENT MAP",
-            "[N] START NEW RANDOM MAP",
-            "[E] ENTER CUSTOM SEED",
-            "[Q] QUIT TO MAIN MENU"
+            "[SPACE] START NEW MAZE",
+            "[1] RETRY CURRENT MAZE",
+            "[2] VIEW CURRENT SEED",
+            "[3] ENTER CUSTOM SEED",
+            "[ESC] QUIT TO MAIN MENU"
         ]
         for i, option in enumerate(options):
             self.draw_text_centered(screen, option, self.small_font, 230 + (i * 18))
