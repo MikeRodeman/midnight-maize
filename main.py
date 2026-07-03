@@ -9,7 +9,7 @@ from src.entities.lookout_tower import LookoutTower
 from src.entities.player import Player
 from src.entities.scarecrow import Scarecrow
 from src.ui.menus import MenuManager
-from src.ui.sidebar import Sidebar
+from src.ui.statbar import StatBar
 
 class Game:
     """The main application class that manages game states, loops, and rendering."""
@@ -23,6 +23,9 @@ class Game:
 
         # Surface to draw everything on before scaling smoothly to the size of the screen:
         self.virtual_surface = pygame.Surface((c.LOGICAL_SCREEN_WIDTH, c.LOGICAL_SCREEN_HEIGHT))
+
+        # Surface where maze is drawn so coordinates don't have to be shifted down by the stat bar height:
+        self.maze_surface = pygame.Surface((c.MAZE_WIDTH, c.MAZE_HEIGHT))
 
         pygame.display.set_caption("Midnight Maize")
         self.clock = pygame.time.Clock()
@@ -80,7 +83,7 @@ class Game:
             seed (str, optional): A specific map seed to use for generation. Defaults to None.
         """
         self.maze = Maze(seed)
-        self.sidebar = Sidebar()
+        self.stat_bar = StatBar()
 
         self.character_sprites = pygame.sprite.Group()
 
@@ -141,13 +144,13 @@ class Game:
     def draw_screen(self) -> None:
         """Renders the game world, UI, and menus to the screen based on the active state."""
         # Clear the virtual surface first:
-        self.virtual_surface.fill(c.BLACK)
+        self.maze_surface.fill(c.BLACK)
 
         # Always draw the game world in the background (except start menu):
         if self.state != c.GameState.START_MENU:
-            self.virtual_surface.blit(self.background_surface, (0, 0))
-            self.character_sprites.draw(self.virtual_surface)
-            self.glow_stick_sprites.draw(self.virtual_surface)
+            self.maze_surface.blit(self.background_surface, (0, 0))
+            self.character_sprites.draw(self.maze_surface)
+            self.glow_stick_sprites.draw(self.maze_surface)
 
             # Fill the nightfall surface with a really dark blue:
             self.nightfall.fill((5, 5, 12))
@@ -169,10 +172,13 @@ class Game:
                             c.GLOW_STICK_LIGHT_RADIUS)
 
             # Draw the nightfall over the maze:
-            self.virtual_surface.blit(self.nightfall, (0, 0))
+            self.maze_surface.blit(self.nightfall, (0, 0))
+
+            # Draw the maze on the virtual surface, shifted down by the stat bar height:
+            self.virtual_surface.blit(self.maze_surface, (0, c.STAT_BAR_HEIGHT))
 
             # Draw sidebar after nightfall is drawn so it stays on top:
-            self.sidebar.draw(self.virtual_surface, self.player, self.elapsed_ticks)
+            self.stat_bar.draw(self.virtual_surface, self.player, self.elapsed_ticks)
 
         # Route the drawing based on the active state:
         if self.state == c.GameState.START_MENU:

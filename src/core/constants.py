@@ -46,17 +46,18 @@ class GameState(Enum):
 
 FPS: Final[int] = 60
 
-GRID_HEIGHT: Final[int] = 15
-GRID_WIDTH: Final[int] = 20
+GRID_WIDTH: Final[int] = 32
+GRID_HEIGHT: Final[int] = 16
 
-TILE_SIZE: Final[int] = 32
+TILE_SIZE: Final[int] = 20
 
-MAZE_HEIGHT: Final[int] = GRID_HEIGHT * TILE_SIZE
 MAZE_WIDTH: Final[int] = GRID_WIDTH * TILE_SIZE
-SIDEBAR_WIDTH: Final[int] = 120
+MAZE_HEIGHT: Final[int] = GRID_HEIGHT * TILE_SIZE
 
-LOGICAL_SCREEN_WIDTH: Final[int] = 640 # MAZE_WIDTH + SIDEBAR_WIDTH
-LOGICAL_SCREEN_HEIGHT: Final[int] = 360 # MAZE_HEIGHT
+STAT_BAR_HEIGHT: Final[int] = 40
+
+LOGICAL_SCREEN_WIDTH: Final[int] = 640
+LOGICAL_SCREEN_HEIGHT: Final[int] = 360
 
 STARTING_WINDOW_WIDTH: Final[int] = 1280
 STARTING_WINDOW_HEIGHT: Final[int] = 720
